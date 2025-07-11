@@ -4,11 +4,8 @@ WORKDIR /var/www/html
 
 COPY . .
 
-RUN docker-php-ext-install pdo pdo_mysql
+# COPY php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
 
-RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -s /bin/sh -D laravel
-
-USER laravel
-
-RUN sudo chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
-RUN sudo chmod -R www-data:www-data /var/www/html
+RUN docker-php-ext-install pdo pdo_mysql \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html
