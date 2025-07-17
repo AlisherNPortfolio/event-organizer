@@ -2,6 +2,10 @@
 
 namespace App\Providers;
 
+use App\Application\Bus\IlluminateCommandBus;
+use App\Application\Bus\IlluminateQueryBus;
+use App\Application\Bus\IQueryBus;
+use App\Bus\ICommandBus;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -11,7 +15,15 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(
+            ICommandBus::class,
+            IlluminateCommandBus::class
+        );
+
+        $this->app->singleton(
+            IQueryBus::class,
+            IlluminateQueryBus::class
+        );
     }
 
     /**
@@ -19,6 +31,16 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        //
+        $commandBus = app(ICommandBus::class);
+        $commandBus->register([
+            // command va command handler-lar bog'lanadi
+            // CommandClass::class => CommandHandlerClass::class,
+        ]);
+
+        $queryBus = app(IQueryBus::class);
+        $queryBus->register([
+            // query va query handler-lar bog'lanadi
+            // QueryClass::class => QueryHandlerClass::class,
+        ]);
     }
 }
