@@ -12,13 +12,21 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users', function (Blueprint $table) {
-            $table->id();
+            $table->uuid('id')->primary();
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
             $table->string('password');
+            $table->integer('rating')->default(0);
+            $table->string('avatar')->nullable();
+            $table->enum('role', ['user', 'admin'])->default('user');
+            $table->timestamp('last_login_at')->nullable();
+            $table->boolean('is_active')->default(true);
             $table->rememberToken();
             $table->timestamps();
+
+            $table->index(columns: ['email']);
+            $table->index(columns: ['rating']);
         });
 
         Schema::create('password_reset_tokens', function (Blueprint $table) {
@@ -42,6 +50,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropIndex(['email']);
+            $table->dropIndex(index: ['rating']);
+        });
+
         Schema::dropIfExists('users');
         Schema::dropIfExists('password_reset_tokens');
         Schema::dropIfExists('sessions');
