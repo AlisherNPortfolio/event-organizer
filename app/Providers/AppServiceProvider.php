@@ -5,8 +5,9 @@ namespace App\Providers;
 use App\Application\Bus\IlluminateCommandBus;
 use App\Application\Bus\IlluminateQueryBus;
 use App\Application\Bus\IQueryBus;
-use App\Bus\ICommandBus;
+use App\Application\Bus\ICommandBus;
 use Illuminate\Support\ServiceProvider;
+use Mews\Captcha\Facades\Captcha;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -15,6 +16,8 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        $this->app->bind('Captcha', Captcha::class);
+
         $this->app->singleton(
             ICommandBus::class,
             IlluminateCommandBus::class

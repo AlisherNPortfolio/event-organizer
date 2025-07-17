@@ -2,7 +2,7 @@
 
 namespace App\Application\Bus;
 
-use App\Bus\ICommandBus;
+use App\Application\Bus\ICommandBus;
 use Illuminate\Bus\Dispatcher;
 
 class IlluminateCommandBus implements ICommandBus
@@ -16,7 +16,7 @@ class IlluminateCommandBus implements ICommandBus
         $this->bus->map($map);
     }
 
-    public function dispatch(\App\Bus\Command $command): mixed
+    public function dispatch(\App\Application\Bus\Command $command): mixed
     {
         return $this->bus->dispatch($command);
     }
