@@ -2,6 +2,8 @@
 
 namespace App\Providers;
 
+use App\Application\Auth\CommandHandlers\RegisterUserCommandHandler;
+use App\Application\Auth\Commands\RegisterUserCommand;
 use App\Application\Bus\IlluminateCommandBus;
 use App\Application\Bus\IlluminateQueryBus;
 use App\Application\Bus\IQueryBus;
@@ -37,7 +39,7 @@ class AppServiceProvider extends ServiceProvider
         $commandBus = app(ICommandBus::class);
         $commandBus->register([
             // command va command handler-lar bog'lanadi
-            // CommandClass::class => CommandHandlerClass::class,
+            RegisterUserCommand::class => RegisterUserCommandHandler::class
         ]);
 
         $queryBus = app(IQueryBus::class);

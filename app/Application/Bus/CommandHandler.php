@@ -2,5 +2,7 @@
 
 namespace App\Application\Bus;
 
-class CommandHandler
-{}
+abstract class CommandHandler
+{
+    // abstract public function handle($command): void;
+}
