@@ -48,3 +48,19 @@ services:
     entrypoint: ["npm"]
     volumes:
       - ./:/var/www/html
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    container_name: app_phpmyadmin
+    ports:
+      - "8586:80"
+    environment:
+      PMA_ARBITRARY: 1
+      PMA_HOST: mysql_db
+      PMA_PORT: 3306
+      MYSQL_USER: homestead
+      MYSQL_ROOT_PASSWORD: secret
+      MYSQL_PASSWORD: secret
+
+    depends_on:
+      - mysql_db
