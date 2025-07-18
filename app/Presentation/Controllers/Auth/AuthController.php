@@ -2,13 +2,17 @@
 
 namespace App\Presentation\Controllers\Auth;
 
+use App\Application\Auth\Commands\LoginUserCommand;
 use App\Application\Auth\Commands\RegisterUserCommand;
 use App\Application\Auth\Services\AuthService;
 use App\Application\Bus\ICommandBus;
 use App\Domain\Auth\ValueObjects\Password;
 use App\Domain\Auth\ValueObjects\UserEmail;
 use App\Presentation\Controllers\Controller;
+use App\Presentation\Requests\Auth\LoginRequest;
 use App\Presentation\Requests\Auth\RegisterRequest;
+use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
@@ -46,6 +50,40 @@ class AuthController extends Controller
             return redirect()->route('login')->with('success', 'Ro\'yxatdan o\'tish muvaffaqiyatli amalga oshirildi.');
         } catch (\Exception $e) {
             return back()->withErrors(['error' => $e->getMessage()])->withInput();
+        }
+    }
+
+    public function login()
+    {
+        return view('auth.login');
+    }
+
+    public function loginPost(LoginRequest $request): RedirectResponse
+    {
+        try {
+            $command = new LoginUserCommand(
+                email: new UserEmail($request->validated('email')),
+                password: new Password($request->validated('password')),
+                remember: $request->validated('remember', false)
+            );
+
+            $this->commandBus->dispatch($command);
+            if (Auth::check('test bu')) {
+                $request->session()->regenerate();
+                $user = Auth::user();
+                $user->updateLastLogin();
+
+                if ($user->isAdmin()) {
+                    return redirect()->route('dashboard')->with('success', 'Xush kelibsiz, ' . $user->name . '!');
+                }
+
+                return redirect()->route('events.index')->with('success', 'Kirish muvaffaqiyatli amalga oshirildi.');
+            } else {
+                return back()->withErrors(['error' => "Email yoki parol noto'g'ri."]);
+            }
+        } catch (Exception $e) {
+            $message = get_exception_message("Login qilishda xatolik yuz berdi: ", $e->getMessage());
+            return back()->withErrors(['error' => $message]);
         }
     }
 }

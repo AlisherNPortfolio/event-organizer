@@ -30,7 +30,7 @@ class UserRepository implements IUserRepository
 
             $eloquentUser->save();
         } catch (\Exception $e) {
-            $message = get_exception_message('Foydalanuvchini saqlashda xatolik.', $e);
+            $message = get_exception_message('Foydalanuvchini saqlashda xatolik.', $e->getMessage());
             throw new \RuntimeException($message);
         }
     }
@@ -81,7 +81,7 @@ class UserRepository implements IUserRepository
             new UserId($eloquentUser->id),
             $eloquentUser->name,
             new UserEmail($eloquentUser->email),
-            new Password($eloquentUser->password),
+            new Password($eloquentUser->password, true),
             $eloquentUser->avatar
         );
     }

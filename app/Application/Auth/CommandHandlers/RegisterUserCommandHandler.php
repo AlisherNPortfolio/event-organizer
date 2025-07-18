@@ -30,7 +30,7 @@ class RegisterUserCommandHandler extends CommandHandler
 
             return $user->getId()->value();
         } catch (\Exception $e) {
-            $message = get_exception_message('Foydalanuvchini ro\'yxatdan o\'tkazishda xatolik.', $e);
+            $message = get_exception_message('Foydalanuvchini ro\'yxatdan o\'tkazishda xatolik.', $e->getMessage());
             throw new \RuntimeException($message);
         }
     }

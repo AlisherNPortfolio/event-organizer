@@ -6,8 +6,8 @@ if (!function_exists('is_development')) {
 }
 
 if (!function_exists('get_exception_message')) {
-    function get_exception_message(string $message, Exception $exception): string
+    function get_exception_message(string $message, string $exceptionMessage): string
     {
-        return is_development() ? $message . ' Error:' . $exception->getMessage() : $message;
+        return is_development() ? $message . ' Error:' . $exceptionMessage : $message;
     }
 }

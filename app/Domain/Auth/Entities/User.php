@@ -68,5 +68,8 @@ class User extends BaseEntity
         return $this->updatedAt;
     }
 
-
+    public function verifyPassword(string $plainPassword): bool
+    {
+        return $this->password->verify($plainPassword);
+    }
 }

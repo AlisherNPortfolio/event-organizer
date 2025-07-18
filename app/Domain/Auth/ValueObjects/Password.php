@@ -9,8 +9,9 @@ use InvalidArgumentException;
 final class Password implements IBaseValueObject
 {
     private string $hashedValue;
+    private string $plainPassword;
 
-    public function __construct(string $plainPassword)
+    public function __construct(string $plainPassword, bool $isHashed = false)
     {
         if (strlen($plainPassword) < 8) { // TODO: password length should be in config file
             throw new InvalidArgumentException('Password must be at least 8 characters long');
@@ -20,7 +21,8 @@ final class Password implements IBaseValueObject
             throw new InvalidArgumentException('Password cannot be empty');
         }
 
-        $this->hashedValue = Hash::make($plainPassword);
+        $this->plainPassword = $plainPassword;
+        $this->hashedValue = $isHashed ? $plainPassword : Hash::make($plainPassword);
     }
 
     public static function from(string $hashedPassword): self
@@ -36,12 +38,17 @@ final class Password implements IBaseValueObject
             return false;
         }
 
-        return password_verify($plainPassword, $this->hashedValue);
+        return Hash::check($plainPassword, $this->hashedValue);
     }
 
     public function value(): string
     {
         return $this->hashedValue;
+    }
+
+    public function plainValue(): string
+    {
+        return $this->plainPassword;
     }
 
     public function equals(IBaseValueObject $other): bool
