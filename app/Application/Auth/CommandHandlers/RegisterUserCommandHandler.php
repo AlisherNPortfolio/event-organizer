@@ -20,10 +20,6 @@ class RegisterUserCommandHandler extends CommandHandler
                 throw new \Exception('Bunday email bilan foydalanuvchi ro\'yxatdan o\'tgan.');
             }
 
-            if ($command->password !== $command->passwordConfirmation) {
-                throw new \Exception('Parol tasdiqlash paroli bilan mos kelmadi.');
-            }
-
             $user = UserFactory::create(
                 $command->name,
                 $command->email,
@@ -34,7 +30,8 @@ class RegisterUserCommandHandler extends CommandHandler
 
             return $user->getId()->value();
         } catch (\Exception $e) {
-            throw new \RuntimeException("Foydalanuvchini ro'yxatdan o'tkazishda xatolik.");
+            $message = get_exception_message('Foydalanuvchini ro\'yxatdan o\'tkazishda xatolik.', $e);
+            throw new \RuntimeException($message);
         }
     }
 }

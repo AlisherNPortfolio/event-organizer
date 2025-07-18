@@ -11,7 +11,7 @@ class UserId implements IBaseValueObject
 
     public function __construct(string $id)
     {
-        if (empty($value)) {
+        if (empty($id)) {
             throw new InvalidArgumentException('ID cannot be empty');
         }
 

@@ -30,7 +30,8 @@ class UserRepository implements IUserRepository
 
             $eloquentUser->save();
         } catch (\Exception $e) {
-            throw new \RuntimeException('Failed to save user');
+            $message = get_exception_message('Foydalanuvchini saqlashda xatolik.', $e);
+            throw new \RuntimeException($message);
         }
     }
 
