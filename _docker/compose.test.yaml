@@ -1,0 +1,159 @@
+services:
+
+    ####################################################################################################
+    # PHP
+    ####################################################################################################
+    php:
+        build: ./_docker/php
+        ports:
+            - 5173:5173
+        volumes:
+            - .:/var/www:cached
+        depends_on:
+            - mysql_db
+
+    ####################################################################################################
+    # Nginx
+    ####################################################################################################
+    nginx:
+        image: nginx
+        ports:
+            - 8585:80
+        volumes:
+            - .:/var/www
+            - ./_docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - ./_docker/nginx/nginx.conf:/etc/nginx/nginx.conf
+        depends_on:
+            - php
+
+    ####################################################################################################
+    # DATABASE (MySQL)
+    ####################################################################################################
+    mysql_db:
+      image: mysql:8.1
+      ports:
+          - 3306:3306
+      volumes:
+          - ./_docker/db/data:/var/lib/mysql
+          - ./_docker/logs:/var/log/mysql
+          - ./_docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+          - ./_docker/db/sql:/docker-entrypoint-initdb.d
+      environment:
+          MYSQL_ROOT_PASSWORD: secret
+          MYSQL_DATABASE: events
+          MYSQL_USER: homestead
+          MYSQL_PASSWORD: secret
+    composer:
+      build:
+        context: .
+        dockerfile: ./_container_data/dockerfiles/composer.dockerfile
+      container_name: app_composer
+      volumes:
+        - ./:/var/www/html
+    artisan:
+      build:
+        context: .
+        dockerfile: _container_data/dockerfiles/php.dockerfile
+      container_name: app_artisan
+      volumes:
+        - ./:/var/www/html
+      entrypoint: ["php", "/var/www/html/artisan"]
+    npm:
+      image: node:22-alpine
+      container_name: app_npm
+      working_dir: /var/www/html
+      entrypoint: ["npm"]
+      volumes:
+        - ./:/var/www/html
+
+    ####################################################################################################
+    # phpMyAdmin
+    ####################################################################################################
+    phpmyadmin:
+        image: phpmyadmin/phpmyadmin
+        ports:
+            - 8080:80
+        links:
+            - mysql_db
+        environment:
+            PMA_HOST: mysql_db
+            PMA_PORT: 3306
+            PMA_ARBITRARY: 1
+        volumes:
+            - ./_docker/phpmyadmin/sessions:/sessions
+
+    ####################################################################################################
+    # Adminer
+    ####################################################################################################
+    adminer:
+        image: adminer
+        ports:
+            - 9090:8080
+        depends_on:
+        - mysql_db
+
+    ####################################################################################################
+    # Mailpit
+    ####################################################################################################
+    mail:
+        image: axllent/mailpit:latest
+        ports:
+        - 8025:8025
+        - 1025:1025
+
+    ####################################################################################################
+    # Redis
+    ####################################################################################################
+    redis:
+        image: redis:latest
+        command: redis-server --appendonly yes
+        volumes:
+        - ./_docker/redis/data:/data
+        ports:
+        - 6379:6379
+
+    # ####################################################################################################
+    # # DATABASE (MariaDB)
+    # ####################################################################################################
+    # db:
+    #     image: mariadb:10.11
+    #     ports:
+    #         - 3306:3306
+    #     volumes:
+    #         - ./_docker/db/data:/var/lib/mysql
+    #         - ./_docker/logs:/var/log/mysql
+    #         - ./_docker/db/my.cnf:/etc/mysql/conf.d/my.cnf
+    #         - ./_docker/db/sql:/docker-entrypoint-initdb.d
+    #     environment:
+    #         MYSQL_ROOT_PASSWORD: root
+    #         MYSQL_DATABASE: laravel_db_name
+    #         MYSQL_USER: laravel_db_user
+    #         MYSQL_PASSWORD: laravel_db_pass
+
+    ####################################################################################################
+    # PostgreSQL
+    ####################################################################################################
+    # db:
+    #     image: postgres:16
+    #     ports:
+    #         - 5432:5432
+    #     volumes:
+    #         - ./_docker/db/data:/var/lib/postgresql/data
+    #         - ./_docker/db/sql:/docker-entrypoint-initdb.d
+    #     environment:
+    #         - POSTGRES_USER=refactorian
+    #         - POSTGRES_PASSWORD=refactorian
+    #         - POSTGRES_DB=refactorian
+
+    ####################################################################################################
+    # pgAdmin
+    ####################################################################################################
+    # pgadmin:
+    #     image: dpage/pgadmin4
+    #     ports:
+    #         - 5050:80
+    #     environment:
+    #         - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+    #         - PGADMIN_DEFAULT_PASSWORD=password
+    #     depends_on:
+    #         - db
