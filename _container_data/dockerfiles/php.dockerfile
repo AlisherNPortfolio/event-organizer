@@ -2,9 +2,10 @@ FROM php:8.4-fpm-alpine
 
 WORKDIR /var/www/html
 
-# COPY . .
+COPY . .
 
-# COPY php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
+
 # Setup GD extension
 RUN apk add --no-cache \
       freetype \
@@ -50,8 +51,6 @@ RUN apk add --no-cache \
 #     && docker-php-source delete \
 #     && rm -rf /tmp/*
 
-RUN docker-php-ext-install pdo pdo_mysql
-
-# RUN docker-php-ext-install pdo pdo_mysql \
-#     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
-#     && chown -R www-data:www-data /var/www/html
+RUN docker-php-ext-install pdo pdo_mysql \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html
