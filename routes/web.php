@@ -14,7 +14,7 @@ Route::middleware('guest')->group(function () {
 //     return '<h1>Test page</h1>';
 // })->name('events.index')->middleware('auth');
 
-Route::middleware('auth.custom')->group(function () {
+Route::middleware(['auth'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/events', function () {
