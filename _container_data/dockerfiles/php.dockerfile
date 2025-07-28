@@ -2,9 +2,9 @@ FROM php:8.4-fpm-alpine
 
 WORKDIR /var/www/html
 
-COPY . .
+# COPY . .
 
-COPY php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
+# COPY php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
 
 # Setup GD extension
 RUN apk add --no-cache \
@@ -26,11 +26,11 @@ RUN apk add --no-cache \
     && rm -rf /tmp/*
 
 # Install intl extension
-RUN apk add --no-cache \
-    icu-dev \
-    && docker-php-ext-install -j$(nproc) intl \
-    && docker-php-ext-enable intl \
-    && rm -rf /tmp/*
+# RUN apk add --no-cache \
+#     icu-dev \
+#     && docker-php-ext-install -j$(nproc) intl \
+#     && docker-php-ext-enable intl \
+#     && rm -rf /tmp/*
 
 # Install mbstring extension
 # RUN apk add --no-cache \
@@ -51,6 +51,8 @@ RUN apk add --no-cache \
 #     && docker-php-source delete \
 #     && rm -rf /tmp/*
 
-RUN docker-php-ext-install pdo pdo_mysql \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html
+RUN docker-php-ext-install pdo pdo_mysql
+
+# RUN docker-php-ext-install pdo pdo_mysql \
+#     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
+#     && chown -R www-data:www-data /var/www/html
