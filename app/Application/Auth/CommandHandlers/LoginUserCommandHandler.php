@@ -16,15 +16,12 @@ class LoginUserCommandHandler extends CommandHandler
 
     public function handle(LoginUserCommand $command): ?string
     {
-        // $user = $this->service->authenticate($command->email, $command->password);
+        $user = $this->service->authenticate($command->email, $command->password);
 
-        if (!Auth::attempt([
-            'email' => $command->email->value(),
-            'password' => $command->password->plainValue()
-        ], $command->remember)) {
+        if (!$user) {
             return null;
         }
 
-        return Auth::id();
+        return $user->getId()->value();
     }
 }

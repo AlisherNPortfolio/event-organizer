@@ -44,7 +44,6 @@ class AuthController extends Controller
             if ($user) {
                 // dispatch event
                 Auth::loginUsingId($userId);
-                return redirect()->route('login')->with('success', 'Ro\'yxatdan o\'tish muvaffaqiyatli amalga oshirildi.');
             }
 
             return redirect()->route('login')->with('success', 'Ro\'yxatdan o\'tish muvaffaqiyatli amalga oshirildi.');
@@ -67,20 +66,26 @@ class AuthController extends Controller
                 remember: $request->validated('remember', false)
             );
 
-            $this->commandBus->dispatch($command);
-            if (Auth::check('test bu')) {
-                $request->session()->regenerate();
+            $userId = $this->commandBus->dispatch($command);
+
+            if ($userId) {
+                Auth::loginUsingId($userId);
                 $user = Auth::user();
                 $user->updateLastLogin();
 
+                $route = 'events.index';
+                $message = 'Kirish muvaffaqiyatli amalga oshirildi.';
+
                 if ($user->isAdmin()) {
-                    return redirect()->route('dashboard')->with('success', 'Xush kelibsiz, ' . $user->name . '!');
+                    $route = 'dashboard';
+                    $message = 'Xush kelibsiz, admin!';
                 }
 
-                return redirect()->route('events.index')->with('success', 'Kirish muvaffaqiyatli amalga oshirildi.');
+                return redirect()->route($route)->with('success', $message);
             } else {
                 return back()->withErrors(['error' => "Email yoki parol noto'g'ri."]);
             }
+
         } catch (Exception $e) {
             $message = get_exception_message("Login qilishda xatolik yuz berdi: ", $e->getMessage());
             return back()->withErrors(['error' => $message]);
