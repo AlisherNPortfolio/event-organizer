@@ -2,12 +2,13 @@
 
 namespace App\Infrastructure\Models;
 
-// use Illuminate\Contracts\Auth\MustVerifyEmail;
+use Illuminate\Contracts\Auth\MustVerifyEmail;
+use App\Infrastructure\Notifications\VerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 
-class User extends Authenticatable
+class User extends Authenticatable implements MustVerifyEmail
 {
     /** @use HasFactory<\Database\Factories\UserFactory> */
     use HasFactory, Notifiable;
@@ -78,6 +79,12 @@ class User extends Authenticatable
     public function updateLastLogin(): void
     {
         $this->update(['last_login_at' => now()]);
+    }
+
+    public function sendEmailVerificationNotification()
+    {
+        // $this->notify(new QueuedVerifyEmail()); // TODO: Queue bilan ishlatish uchun. queue:work ishga tushirilishi kerak.
+        $this->notify(new VerifyEmail());
     }
 
     protected static function boot()

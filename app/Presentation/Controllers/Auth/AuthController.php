@@ -12,6 +12,7 @@ use App\Presentation\Controllers\Controller;
 use App\Presentation\Requests\Auth\LoginRequest;
 use App\Presentation\Requests\Auth\RegisterRequest;
 use Exception;
+use Illuminate\Auth\Events\Registered;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,8 +43,8 @@ class AuthController extends Controller
 
             $user = $this->service->getUserByEmail($command->email);
             if ($user) {
-                // dispatch event
                 Auth::loginUsingId($userId);
+                event(new Registered(Auth::user()));
             }
 
             return redirect()->route('login')->with('success', 'Ro\'yxatdan o\'tish muvaffaqiyatli amalga oshirildi.');
@@ -88,6 +89,17 @@ class AuthController extends Controller
 
         } catch (Exception $e) {
             $message = get_exception_message("Login qilishda xatolik yuz berdi: ", $e->getMessage());
+            return back()->withErrors(['error' => $message]);
+        }
+    }
+
+    public function logout()
+    {
+        try {dd('test');
+            Auth::logout();
+            return redirect()->route('login')->with('success', 'Tizimdan muvaffaqiyatli chiqildi.');
+        } catch (Exception $e) {
+            $message = get_exception_message("Tizimdan chiqishda xatolik yuz berdi: ", $e->getMessage());
             return back()->withErrors(['error' => $message]);
         }
     }

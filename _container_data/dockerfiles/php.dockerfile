@@ -2,9 +2,12 @@ FROM php:8.4-fpm-alpine
 
 WORKDIR /var/www/html
 
-# COPY . .
+COPY . .
 
-# COPY php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
+COPY php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
+
+# RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -s /bin/sh -D laravel
+# USER laravel
 
 # Setup GD extension
 RUN apk add --no-cache \

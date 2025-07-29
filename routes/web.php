@@ -1,6 +1,8 @@
 <?php
 
 use App\Presentation\Controllers\Auth\AuthController;
+use Illuminate\Foundation\Auth\EmailVerificationRequest;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
@@ -10,11 +12,8 @@ Route::middleware('guest')->group(function () {
     Route::get('/login', [AuthController::class, 'login'])->name('login');
     Route::post('/login', [AuthController::class, 'loginPost'])->name('login.post');
 });
-// Route::get('events', function () {
-//     return '<h1>Test page</h1>';
-// })->name('events.index')->middleware('auth');
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
     Route::get('/events', function () {
@@ -24,4 +23,22 @@ Route::middleware(['auth'])->group(function () {
         return 'Dashboard page';
     })->name('dashboard');
 });
+
+// Email verification routes
+Route::middleware('auth')->prefix('email')->group(function () {
+    Route::get('/verify/{id}/{hash}', function (EmailVerificationRequest $request) {
+        $request->fulfill();
+
+        return redirect(route('dashboard'));
+    })->middleware(['signed'])->name('verification.verify');
+    Route::get('/verify', function () {
+        return view('auth.verify-email');
+    })->name('verification.notice');
+    Route::post('/verification-notification', function (Request $request) {
+        $request->user()->sendEmailVerificationNotification();
+
+        return back()->with('message', 'Verification link sent!');
+    })->middleware(['throttle:6,1'])->name('verification.send');
+});
+// Captcha route
 Route::get('/captcha/{config?}', '\Mews\Captcha\CaptchaController@getCaptcha')->name('captcha');
