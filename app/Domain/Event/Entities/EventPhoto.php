@@ -1,0 +1,39 @@
+<?php
+
+namespace App\Domain\Event\Entities;
+
+use App\Domain\Auth\ValueObjects\UserId;
+use App\Domain\Event\ValueObjects\EventId;
+use DateTime;
+use Illuminate\Support\Str;
+
+class EventPhoto
+{
+    private DateTime $uploadedAt = new DateTime();
+    private string $id;
+
+    public function __construct(private EventId $eventId, private UserId $uploadedBy, private string $path)
+    {
+        $this->id = Str::uuid();
+    }
+
+    public function getId(): string
+    {
+        return $this->id;
+    }
+
+    public function getEventId(): EventId
+    {
+        return $this->eventId;
+    }
+
+    public function getUploadedBy(): UserId
+    {
+        return $this->uploadedBy;
+    }
+
+    public function getUploadedAt(): DateTime
+    {
+        return $this->uploadedAt;
+    }
+}
