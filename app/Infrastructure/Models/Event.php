@@ -6,6 +6,8 @@ use Database\Factories\EventFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Str;
 
 class Event extends Model
@@ -42,6 +44,11 @@ class Event extends Model
         'max_participants' => 'integer'
     ];
 
+    public function getParticipantCountAttribute(): int
+    {
+        return $this->participants()->count();
+    }
+
     protected static function newFactory()
     {
         return EventFactory::new();
@@ -50,6 +57,23 @@ class Event extends Model
     public function organizer(): BelongsTo
     {
         return $this->belongsTo(User::class, 'organizer_id');
+    }
+
+    public function participants(): HasMany
+    {
+        return $this->hasMany(Participant::class, 'event_id');
+    }
+
+    public function photos(): HasMany
+    {
+        return $this->hasMany(EventPhoto::class, 'event_id');
+    }
+
+    public function participant_users(): BelongsToMany
+    {
+        return $this->belongsToMany(User::class, 'participants', 'event_id', 'user_id')
+                    ->withTimestamps()
+                    ->withPivot(['attended', 'marked']);
     }
 
     protected static function boot()
