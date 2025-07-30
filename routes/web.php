@@ -24,6 +24,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return 'Dashboard page';
     })->name('dashboard');
+
+    Route::prefix('events')->group(function () {
+        Route::get('/create', fn () => 'create')->name('events.create');
+        Route::get('/join', fn () => 'join')->name('events.join');
+    });
 });
 
 Route::get('/events', [EventController::class, 'index'])->name('events.index');
