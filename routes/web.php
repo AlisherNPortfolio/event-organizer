@@ -1,9 +1,9 @@
 <?php
 
 use App\Presentation\Controllers\Auth\AuthController;
+use App\Presentation\Controllers\Event\EventController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 
 Route::middleware('guest')->group(function () {
@@ -25,6 +25,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         return 'Dashboard page';
     })->name('dashboard');
 });
+
+Route::get('/events', [EventController::class, 'index'])->name('events.index');
 
 // Email verification routes
 Route::middleware('auth')->prefix('email')->group(function () {
