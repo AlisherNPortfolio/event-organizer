@@ -15,6 +15,7 @@ class Event
 {
     private string $status = 'upcoming';
     private DateTime $createdAt = new DateTime();
+    private array $participants = [];
 
     public function __construct(
         private EventId $id,
@@ -58,6 +59,42 @@ class Event
             $endTime,
             $images
         );
+    }
+
+    public static function fromDatabase(
+        EventId $id,
+        UserId $organizerId,
+        EventTitle $title,
+        EventDescription $description,
+        string $address,
+        ParticipantLimit $participantLimit,
+        EventPrice $price,
+        array $images = [],
+        string $status = 'upcoming',
+        DateTime $startTime,
+        ?DateTime $endTime,
+        ?DateTime $createdAt,
+        array $participants = [],
+        array $photos = []
+    ): self {
+        $event = new self(
+            $id,
+            $organizerId,
+            $title,
+            $description,
+            $address,
+            $participantLimit,
+            $price,
+            $startTime,
+            $endTime,$images
+        );
+
+        $event->status = $status;
+        $event->createdAt = $createdAt;
+        $event->participants = $participants;
+        $event->images = $photos;
+
+        return $event;
     }
 
     public static function validateEventTimesForCreation(DateTime $startTime, ?DateTime $endTime): void
@@ -131,6 +168,11 @@ class Event
         return $this->createdAt;
     }
 
+    public function getParticipants(): array
+    {
+        return $this->participants;
+    }
+
     public function hasStarted(): bool
     {
         return new DateTime() >= $this->startTime;
@@ -143,6 +185,19 @@ class Event
         }
 
         return new DateTime() > $this->endTime;
+    }
+
+    public function markAsOngoing(): void
+    {
+        throw_if($this->status != 'upcoming', new InvalidArgumentException("Faqat 'upcoming' holatidagi tadbirlar boshlanishi mumkin"));
+        $this->status = 'ongoing';
+    }
+
+    public function markAsCompleted(): void
+    {
+        throw_if($this->status != 'ongoing', new InvalidArgumentException("Faqat 'ongoing' holatidagi tadbirlar tugatilishi mumkin"));
+
+        $this->status = 'completed';
     }
 
     private function validateImages(array $images): void
@@ -159,5 +214,16 @@ class Event
     private function isOrganizer(UserId $userId): bool
     {
         return $this->organizerId->equals($userId);
+    }
+
+    private function hasParticipant(UserId $userId): bool
+    {
+        foreach ($this->participants as $participant) {
+            if ($participant->equals($userId)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 }
