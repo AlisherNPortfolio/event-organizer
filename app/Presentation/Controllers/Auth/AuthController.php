@@ -45,6 +45,8 @@ class AuthController extends Controller
             if ($user) {
                 Auth::loginUsingId($userId);
                 event(new Registered(Auth::user()));
+                // vaqtincha. Productionda o'chiriladi
+                Auth::user()->update(['is_active' => 1, 'email_verified_at' => now()]);
             }
 
             return redirect()->route('login')->with('success', 'Ro\'yxatdan o\'tish muvaffaqiyatli amalga oshirildi.');
