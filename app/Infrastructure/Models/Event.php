@@ -76,6 +76,21 @@ class Event extends Model
                     ->withPivot(['attended', 'marked']);
     }
 
+    public function scopeUpcoming($query): mixed
+    {
+        return $query->where('status', 'upcoming');
+    }
+
+    public function scopeOngoing($query): mixed
+    {
+        return $query->where('status', 'ongoing');
+    }
+
+    public function scopeCompleted($query): mixed
+    {
+        return $query->where('status', 'completed');
+    }
+
     protected static function boot()
     {
         parent::boot();
