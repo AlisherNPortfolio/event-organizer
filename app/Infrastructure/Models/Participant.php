@@ -2,6 +2,7 @@
 
 namespace App\Infrastructure\Models;
 
+use Database\Factories\ParticipantFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -30,5 +31,10 @@ class Participant extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class, 'user_id');
+    }
+
+    protected static function newFactory()
+    {
+        return ParticipantFactory::new();
     }
 }
