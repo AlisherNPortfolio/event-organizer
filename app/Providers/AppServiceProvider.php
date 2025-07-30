@@ -10,6 +10,10 @@ use App\Application\Bus\IlluminateCommandBus;
 use App\Application\Bus\IlluminateQueryBus;
 use App\Application\Bus\IQueryBus;
 use App\Application\Bus\ICommandBus;
+use App\Application\Event\Queries\GetEventQuery;
+use App\Application\Event\Queries\GetEventsQuery;
+use App\Application\Event\QueryHandlers\GetEventQueryHandler;
+use App\Application\Event\QueryHandlers\GetEventsQueryHandler;
 use Illuminate\Support\ServiceProvider;
 use Mews\Captcha\Facades\Captcha;
 
@@ -48,7 +52,8 @@ class AppServiceProvider extends ServiceProvider
         $queryBus = app(IQueryBus::class);
         $queryBus->register([
             // query va query handler-lar bog'lanadi
-            // QueryClass::class => QueryHandlerClass::class,
+            GetEventsQuery::class => GetEventsQueryHandler::class,
+            GetEventQuery::class => GetEventQueryHandler::class
         ]);
     }
 }
