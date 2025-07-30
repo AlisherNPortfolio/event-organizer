@@ -24,3 +24,4 @@ Homestead.yaml
 Thumbs.db
 /_docker/db/data
 /_docker/redis/data
+/_container_data/db/data/mysql.sock
