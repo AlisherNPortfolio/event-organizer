@@ -25,6 +25,11 @@ services:
   mysql_db:
     image: mysql:8.0
     container_name: app_db
+    volumes:
+      - ./_container_data/db/data:/var/lib/mysql
+      - ./_container_data/logs:/var/log/mysql
+      - ./_container_data/db/my.cnf:/etc/mysql/conf.d/my.cnf
+      - ./_container_data/db/sql:/docker-entrypoint-initdb.d
     env_file: ./_container_data/env/mysql.env
   composer:
     build:
