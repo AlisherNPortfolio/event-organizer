@@ -99,7 +99,7 @@ class EventRepository implements IEventRepository
         })->toArray();
     }
 
-    public function search(string $query, array $filters = []): array
+    public function search(string $query, array $filters = [], int $page = 1, int $perPage = 10): array
     {
         $queryBuilder = EloquentEvent::query()->with(['participants']);
 
@@ -137,7 +137,10 @@ class EventRepository implements IEventRepository
 
         $eloquentEvents = $queryBuilder->where('status', '!=', 'completed')
                                     ->orderBy('start_time', 'asc')
+                                    ->skip(($page - 1) * $perPage)
+                                    ->take($perPage)
                                     ->get();
+
         return $eloquentEvents->map(function ($eloquentEvent) {
             return $this->toDomainEvent($eloquentEvent);
         })->toArray();

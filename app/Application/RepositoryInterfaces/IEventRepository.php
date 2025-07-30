@@ -13,7 +13,7 @@ interface IEventRepository
     public function findById(EventId $id): ?Event;
     public function findByOrganizer(UserId $organizerId): array;
     public function findAll(int $page = 1, int $perPage = 10): array;
-    public function search(string $query, array $filters = []): array;
+    public function search(string $query, array $filters = [], int $page = 1, int $perPage = 10): array;
     public function delete(EventId $id): void;
     public function findSimilarEvents(Event $event, int $limit = 6): array;
 
