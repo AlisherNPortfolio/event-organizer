@@ -26,7 +26,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::prefix('events')->group(function () {
-        Route::get('/create', fn () => 'create')->name('events.create');
+        Route::get('/create', [EventController::class, 'create'])->name('events.create');
+        Route::post('/', [EventController::class, 'store'])->name('events.store');
+        Route::get('{event}', [EventController::class, fn () => 'Show'])->name('events.show');
         Route::get('/join', fn () => 'join')->name('events.join');
     });
 });

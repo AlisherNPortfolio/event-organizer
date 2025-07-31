@@ -2,18 +2,28 @@
 
 namespace App\Presentation\Controllers\Event;
 
+use App\Application\Event\CommandHandlers\CreateEventCommandHandler;
+use App\Application\Event\Commands\CreateEventCommand;
 use App\Application\Event\Queries\GetEventsQuery;
 use App\Application\Event\QueryHandlers\GetEventsQueryHandler;
+use App\Domain\Auth\ValueObjects\UserId;
+use App\Domain\Event\ValueObjects\EventDescription;
+use App\Domain\Event\ValueObjects\EventTitle;
 use App\Presentation\Controllers\Controller;
+use App\Presentation\Requests\Event\CreateEventRequest;
 use App\Presentation\ViewModels\EventListViewModel;
 use Exception;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
 
 class EventController extends Controller
 {
     public function __construct(
-        private GetEventsQueryHandler $getEventsQueryHandler
+        private GetEventsQueryHandler $getEventsQueryHandler,
+        private CreateEventCommandHandler $createEventCommandHandler
     )
     {}
 
@@ -36,6 +46,60 @@ class EventController extends Controller
                 'viewModel' => new EventListViewModel([], []),
                 'error' => "Tadbirlarni yuklashda xatolik yuz berdi"
             ]);
+        }
+    }
+
+    public function create(): View
+    {
+        return view('events.create');
+    }
+
+    public function store(CreateEventRequest $request): RedirectResponse
+    {
+        try {
+            $images = [];
+
+            if ($request->hasFile('images')) {
+                foreach ($request->file('images') as $image) {
+                    $path = $image->store('events', 'public');
+                    $images[] = $path;
+                }
+            }
+
+            $incomingData = $request->validated();
+
+            $command = new CreateEventCommand(
+                new UserId(Auth::id()),
+                new EventTitle($incomingData['title']),
+                new EventDescription($incomingData['description']),
+                $incomingData['address'],
+                $incomingData['min_participants'],
+                $incomingData['max_participants'],
+                $incomingData['price'] ?? 0,
+                $incomingData['currency'] ?? 'UZS',
+                $images,
+                $incomingData['start_time'],
+                $incomingData['end_time']
+            );
+
+            $eventId = $this->createEventCommandHandler->handle($command);
+
+            return redirect()->route('events.show', $eventId)
+                            ->with('success', 'Tadbir yaratildi');
+        } catch (Exception $e) {
+            if (isset($images)) {
+                foreach ($images as $image) {
+                    if (Storage::disk('public')->exists($image)) {
+                        Storage::disk('public')->delete($image);
+                    }
+                }
+            }
+
+            $message = get_exception_message(
+                'Tadbirni saqlashda xatolik yuz berdi. Xato: ',
+                $e->getMessage()
+            );
+            return redirect()->back()->withErrors(['error' => $message])->withInput();
         }
     }
 }
