@@ -9,11 +9,12 @@ use Illuminate\Support\Str;
 
 class EventPhoto
 {
-    private DateTime $uploadedAt = new DateTime();
+    private DateTime $uploadedAt;
     private string $id;
 
     public function __construct(private EventId $eventId, private UserId $uploadedBy, private string $path)
     {
+        $this->uploadedAt = new DateTime();
         $this->id = Str::uuid();
     }
 

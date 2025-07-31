@@ -14,7 +14,7 @@ use InvalidArgumentException;
 class Event
 {
     private string $status = 'upcoming';
-    private DateTime $createdAt = new DateTime();
+    private DateTime $createdAt;
     private array $participants = [];
 
     public function __construct(
@@ -30,6 +30,7 @@ class Event
         private array $images = []
     )
     {
+        $this->createdAt = new DateTime();
         self::validateEventTimesForCreation($startTime, $endTime);
         self::validateImages($images);
     }

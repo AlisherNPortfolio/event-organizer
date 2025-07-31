@@ -8,12 +8,14 @@ use DateTime;
 
 class Participant
 {
-    private DateTime $joinedAt = new DateTime();
+    private DateTime $joinedAt;
     private bool $attended = false;
     private bool $marked = false;
 
     public function __construct(private EventId $eventId, private UserId $userId)
-    {}
+    {
+        $this->joinedAt = new DateTime();
+    }
 
     public function isAttended(): bool
     {
