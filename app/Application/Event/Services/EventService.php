@@ -2,7 +2,7 @@
 
 namespace App\Application\Event\Services;
 
-use App\Application\DTO\Event\EventDTO;
+use App\Application\Event\DTO\EventDTO;
 use App\Application\RepositoryInterfaces\IEventRepository;
 use App\Application\RepositoryInterfaces\IParticipantRepository;
 use App\Application\RepositoryInterfaces\IUserRepository;
