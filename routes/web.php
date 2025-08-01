@@ -28,7 +28,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::prefix('events')->group(function () {
         Route::get('/create', [EventController::class, 'create'])->name('events.create');
         Route::post('/', [EventController::class, 'store'])->name('events.store');
-        Route::get('{event}', [EventController::class, fn () => 'Show'])->name('events.show');
+        Route::get('{event}', [EventController::class, 'show'])->name('events.show');
         Route::get('/join', fn () => 'join')->name('events.join');
     });
 });
