@@ -10,7 +10,7 @@ COPY php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
 # USER laravel
 
 # Setup GD extension
-RUN apk add --no-cache \
+RUN apk add \
       freetype \
       libjpeg-turbo \
       libpng \
@@ -22,7 +22,7 @@ RUN apk add --no-cache \
       --with-jpeg=/usr/include/ \
     && docker-php-ext-install -j$(nproc) gd \
     && docker-php-ext-enable gd \
-    && apk del --no-cache \
+    && apk del \
       freetype-dev \
       libjpeg-turbo-dev \
       libpng-dev \
@@ -54,8 +54,8 @@ RUN apk add --no-cache \
 #     && docker-php-source delete \
 #     && rm -rf /tmp/*
 
-RUN docker-php-ext-install pdo pdo_mysql
+# RUN docker-php-ext-install pdo pdo_mysql
 
-# RUN docker-php-ext-install pdo pdo_mysql \
-#     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
-#     && chown -R www-data:www-data /var/www/html
+RUN docker-php-ext-install pdo pdo_mysql \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chown -R www-data:www-data /var/www/html
