@@ -58,7 +58,6 @@
 
         <!-- Footer -->
         @include('layouts.partials.footer')
-        {{-- <app-notification :message="message"></app-notification> --}}
         <notifications position="bottom right" />
     </div>
 
