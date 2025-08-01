@@ -4,14 +4,18 @@ namespace App\Presentation\Controllers\Event;
 
 use App\Application\Event\CommandHandlers\CreateEventCommandHandler;
 use App\Application\Event\Commands\CreateEventCommand;
+use App\Application\Event\Queries\GetEventQuery;
 use App\Application\Event\Queries\GetEventsQuery;
+use App\Application\Event\QueryHandlers\GetEventQueryHandler;
 use App\Application\Event\QueryHandlers\GetEventsQueryHandler;
 use App\Domain\Auth\ValueObjects\UserId;
 use App\Domain\Event\ValueObjects\EventDescription;
+use App\Domain\Event\ValueObjects\EventId;
 use App\Domain\Event\ValueObjects\EventTitle;
 use App\Presentation\Controllers\Controller;
 use App\Presentation\Requests\Event\CreateEventRequest;
 use App\Presentation\ViewModels\EventListViewModel;
+use App\Presentation\ViewModels\EventViewModel;
 use Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -23,6 +27,7 @@ class EventController extends Controller
 {
     public function __construct(
         private GetEventsQueryHandler $getEventsQueryHandler,
+        private GetEventQueryHandler $getEventQueryHandler,
         private CreateEventCommandHandler $createEventCommandHandler
     )
     {}
@@ -46,6 +51,28 @@ class EventController extends Controller
                 'viewModel' => new EventListViewModel([], []),
                 'error' => "Tadbirlarni yuklashda xatolik yuz berdi"
             ]);
+        }
+    }
+
+    public function show(string $uuid): View
+    {
+        try {
+            $query = new GetEventQuery(
+                new EventId($uuid)
+            );
+
+            [
+                $eventDTO,
+                $isParticipating,
+                $participants,
+                $statistics
+            ] = $this->getEventQueryHandler->handle($query);
+
+            $viewModel = new EventViewModel($eventDTO, $isParticipating, $participants, $statistics);
+
+            return view('events.show', compact('viewModel'));
+        } catch (Exception $e) {
+            abort(404, "Tadbir topilmadi");
         }
     }
 
