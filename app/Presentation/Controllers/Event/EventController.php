@@ -3,7 +3,9 @@
 namespace App\Presentation\Controllers\Event;
 
 use App\Application\Event\CommandHandlers\CreateEventCommandHandler;
+use App\Application\Event\CommandHandlers\EditEventCommandHandler;
 use App\Application\Event\Commands\CreateEventCommand;
+use App\Application\Event\Commands\EditEventCommand;
 use App\Application\Event\Queries\GetEventQuery;
 use App\Application\Event\Queries\GetEventsQuery;
 use App\Application\Event\QueryHandlers\GetEventQueryHandler;
@@ -22,13 +24,15 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\View\View;
+use Symfony\Component\HttpFoundation\Response;
 
 class EventController extends Controller
 {
     public function __construct(
         private GetEventsQueryHandler $getEventsQueryHandler,
         private GetEventQueryHandler $getEventQueryHandler,
-        private CreateEventCommandHandler $createEventCommandHandler
+        private CreateEventCommandHandler $createEventCommandHandler,
+        private EditEventCommandHandler $editEventCommandHandler
     )
     {}
 
@@ -54,7 +58,7 @@ class EventController extends Controller
         }
     }
 
-    public function show(string $uuid): View
+    public function show(string $uuid): View|RedirectResponse
     {
         try {
             $query = new GetEventQuery(
@@ -72,7 +76,8 @@ class EventController extends Controller
 
             return view('events.show', compact('viewModel'));
         } catch (Exception $e) {
-            abort(404, "Tadbir topilmadi");
+            $message = get_exception_message("Tadbirni olishda muammo. ", $e->getMessage());
+            return redirect()->back()->withErrors(['error' => $message]);
         }
     }
 
@@ -127,6 +132,42 @@ class EventController extends Controller
                 $e->getMessage()
             );
             return redirect()->back()->withErrors(['error' => $message])->withInput();
+        }
+    }
+
+    public function edit(string $uuid): View|RedirectResponse
+    {
+        try {
+            $command = new EditEventCommand(
+                new EventId($uuid)
+            );
+
+            $eventDTO = $this->editEventCommandHandler->handle($command);
+
+            abort_if(
+                !$eventDTO,
+                Response::HTTP_NOT_FOUND,
+                "Event topilmadi"
+            );
+
+            abort_if(
+                $eventDTO->organizerId !== Auth::id(),
+                Response::HTTP_FORBIDDEN,
+                "Sizda bu tadbirni tahrirlash huquqi yo'q"
+            );
+
+            if ($eventDTO->status !== 'upcoming') {
+                return redirect()->route('events.show', $uuid)
+                    ->withErrors(['error' => "Faqat bo'lishi kutilayotgan tadbirlarni tahrirlash mumkin."]);
+            }
+
+            $viewModel = new EventViewModel($eventDTO);
+
+            return view('events.edit', compact('viewModel'));
+
+        } catch (Exception $e) {
+            $message = get_exception_message("Tadbirni o'zgartirishda muammo.", $e->getMessage());
+            return redirect()->back()->withErrors(['error' => $message]);
         }
     }
 }
