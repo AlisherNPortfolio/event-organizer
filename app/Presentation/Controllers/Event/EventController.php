@@ -16,6 +16,7 @@ use App\Domain\Event\ValueObjects\EventId;
 use App\Domain\Event\ValueObjects\EventTitle;
 use App\Presentation\Controllers\Controller;
 use App\Presentation\Requests\Event\CreateEventRequest;
+use App\Presentation\Requests\Event\UpdateEventRequest;
 use App\Presentation\ViewModels\EventListViewModel;
 use App\Presentation\ViewModels\EventViewModel;
 use Exception;
@@ -138,11 +139,11 @@ class EventController extends Controller
     public function edit(string $uuid): View|RedirectResponse
     {
         try {
-            $command = new EditEventCommand(
+            $query = new GetEventQuery(
                 new EventId($uuid)
             );
 
-            $eventDTO = $this->editEventCommandHandler->handle($command);
+            [$eventDTO] = $this->getEventQueryHandler->handle($query, true);
 
             abort_if(
                 !$eventDTO,
@@ -167,6 +168,35 @@ class EventController extends Controller
 
         } catch (Exception $e) {
             $message = get_exception_message("Tadbirni o'zgartirishda muammo.", $e->getMessage());
+            return redirect()->back()->withErrors(['error' => $message]);
+        }
+    }
+
+    public function update(UpdateEventRequest $request, string $uuid)
+    {
+        try {
+            $eventId = new EventId($uuid);
+            $request->validated();
+            $command = new EditEventCommand(
+                $eventId,
+                new EventTitle($request->title),
+                new EventDescription($request->description),
+                $request->address,
+                $request->startTime,
+                $request->minParticipants,
+                $request->has('maxParticipants') ? $request->maxParticipants : null,
+                $request->has('price') ? $request->price : null,
+                $request->has('currency') ? $request->currency : null,
+                $request->has('endTime') ? $request->endTime : null,
+                $request->hasFile('images') ? $request->file('images') : null
+            );
+
+            $event = $this->editEventCommandHandler->handle($command);
+        } catch (Exception $e) {
+            $message = get_exception_message(
+                "Tadbirni yangilashda xatolik.",
+                $e->getMessage()
+            );
             return redirect()->back()->withErrors(['error' => $message]);
         }
     }

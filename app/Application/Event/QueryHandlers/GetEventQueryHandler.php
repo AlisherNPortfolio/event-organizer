@@ -17,7 +17,7 @@ class GetEventQueryHandler
     )
     {}
 
-    public function handle(GetEventQuery $query): array
+    public function handle(GetEventQuery $query, bool $onlyEventData = false): array
     {
         $eventDTO = $this->service->getEventById($query->eventId);
         abort_if(!$eventDTO, 404, "Tadbir topilmadi");
@@ -38,11 +38,11 @@ class GetEventQueryHandler
 
         $statistics = $this->participantService->getParticipantStatistics($query->eventId->value());
 
-        return [
-            $eventDTO ?? null,
-            $isParticipating,
-            $participants,
-            $statistics
-        ];
+        $result = [$eventDTO ?? null];
+        if (!$onlyEventData) {
+            $result = array_merge($result, [$isParticipating, $participants, $statistics]);
+        }
+
+        return $result;
     }
 }
