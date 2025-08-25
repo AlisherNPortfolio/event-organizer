@@ -54,6 +54,9 @@ RUN apk add \
 #     && docker-php-source delete \
 #     && rm -rf /tmp/*
 
+RUN docker-php-ext-install opcache \
+    && docker-php-ext-enable opcache
+
 # RUN docker-php-ext-install pdo pdo_mysql
 
 RUN docker-php-ext-install pdo pdo_mysql \
