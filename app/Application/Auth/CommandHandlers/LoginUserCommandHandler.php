@@ -5,7 +5,6 @@ namespace App\Application\Auth\CommandHandlers;
 use App\Application\Auth\Commands\LoginUserCommand;
 use App\Application\Auth\Services\AuthService;
 use App\Application\Bus\CommandHandler;
-use Illuminate\Support\Facades\Auth;
 
 class LoginUserCommandHandler extends CommandHandler
 {
