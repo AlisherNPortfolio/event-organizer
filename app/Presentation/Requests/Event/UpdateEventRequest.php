@@ -23,8 +23,7 @@ class UpdateEventRequest extends FormRequest
             'max_participants' => ['nullable', 'integer', 'gte:min_participants'],
             'price' => ['nullable', 'numeric', 'min:0'],
             'currency' => ['nullable','string', 'in:UZS,USD,EUR'],
-            'images' => ['nullable', 'array', 'max:5'],
-            'images.*' => ['nullable','image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
+            'image' => ['nullable','image', 'mimes:jpeg,png,jpg,gif', 'max:2048'],
         ];
     }
 
@@ -42,10 +41,7 @@ class UpdateEventRequest extends FormRequest
             'min_participants.required' => 'Minimal qatnashchilar soni kiritish majburiy',
             'min_participants.min' => 'Minimal qatnashchilar soni 1 dan kam bo\'lmasligi kerak',
             'max_participants.gte' => 'Maksimal qatnashchilar soni minimal sondan kam bo\'lmasligi kerak',
-            'images.min' => 'Kamida bitta rasm yuklash kerak',
-            'images.max' => 'Ko\'pi bilan 5 ta rasm yuklash mumkin',
-            'images.*.image' => 'Faqat rasm fayllari yuklash mumkin',
-            'images.*.max' => 'Rasm hajmi 2MB dan oshmasligi kerak',
+            'image.max' => 'Rasm hajmi 2MB dan oshmasligi kerak'
         ];
     }
 }

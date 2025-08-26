@@ -186,7 +186,7 @@ class EventController extends Controller
                 $request->has('price') ? $request->price : null,
                 $request->has('currency') ? $request->currency : null,
                 $request->has('end_time') ? $request->end_time : null,
-                $request->hasFile('images') ? $request->file('images') : null
+                $request->hasFile('image') ? $request->file('image') : null
             );
 
             $this->editEventCommandHandler->handle($command);

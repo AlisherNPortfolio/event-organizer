@@ -122,24 +122,22 @@
                 </div>
 
                 <!-- Current Images -->
-                @if(!empty($event->images))
+                @if(!empty($event->image))
                     <div>
-                        <label class="block text-sm font-medium text-gray-700">Hozirgi rasmlar</label>
+                        <label class="block text-sm font-medium text-gray-700">Asosiy</label>
                         <div class="mt-2 grid grid-cols-3 gap-4">
-                            @foreach($event->images as $image)
-                                <img src="{{ asset('storage/' . $image) }}" alt="Event image" class="w-full h-24 object-cover rounded">
-                            @endforeach
+                            <img src="{{ asset('storage/' . $event->image) }}" alt="Event image" class="w-full h-24 object-cover rounded">
                         </div>
                     </div>
                 @endif
 
                 <!-- New Images -->
                 <div>
-                    <label for="images" class="block text-sm font-medium text-gray-700">Yangi rasmlar (ixtiyoriy)</label>
-                    <input type="file" name="images[]" id="images" multiple accept="image/*"
+                    <label for="images" class="block text-sm font-medium text-gray-700">Yangi rasm (ixtiyoriy)</label>
+                    <input type="file" name="image" id="images" accept="image/*"
                            class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                    <p class="mt-1 text-sm text-gray-500">Yangi rasm yuklansa, eskilari o'chib ketadi</p>
-                    @error('images')
+                    <p class="mt-1 text-sm text-gray-500">Yangi rasm yuklansa, eskisi o'chib ketadi</p>
+                    @error('image')
                         <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                     @enderror
                 </div>

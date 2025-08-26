@@ -6,6 +6,7 @@ use App\Application\Bus\Command;
 use App\Domain\Event\ValueObjects\EventDescription;
 use App\Domain\Event\ValueObjects\EventId;
 use App\Domain\Event\ValueObjects\EventTitle;
+use Illuminate\Http\UploadedFile;
 
 class EditEventCommand extends Command
 {
@@ -20,7 +21,7 @@ class EditEventCommand extends Command
         public ?float $price,
         public ?string $currency,
         public ?string $endTime,
-        public ?array $images
+        public ?UploadedFile $image
     )
     {}
 }

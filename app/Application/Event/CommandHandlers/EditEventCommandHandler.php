@@ -37,19 +37,27 @@ class EditEventCommandHandler extends CommandHandler
 
             $images = $event->getPhotos();
 
-            if ($command->images) {
-                if (!empty($images)) {
-                    foreach($images as $image) {
-                        if (Storage::disk('public')->exists($image)) {
-                            Storage::disk('public')->delete($image);
-                        }
-                    }
+            // if ($command->images) {
+            //     if (!empty($images)) {
+            //         foreach($images as $image) {
+            //             if (Storage::disk('public')->exists($image)) {
+            //                 Storage::disk('public')->delete($image);
+            //             }
+            //         }
+            //     }
+
+            //     $images = [];
+            //     foreach ($command->images as $image) {
+            //         $images[] = $image->store("events", "public");
+            //     }
+            // }
+            $imagePath = $event->getImage();
+            if ($command->image) {
+                if (!empty($event->getImage()) && Storage::disk('public')->exists($event->getImage())) {
+                    Storage::disk('public')->delete($event->getImage());
                 }
 
-                $images = [];
-                foreach ($command->images as $image) {
-                    $images[] = $image->store("events", "public");
-                }
+                $imagePath = $command->image->store("events", "public");
             }
 
             $domainEvent = Event::fromDatabase(
@@ -70,7 +78,7 @@ class EditEventCommandHandler extends CommandHandler
                 new DateTime($command->startTime),
                 new DateTime($command->endTime),
                 $event->getCreatedAt(),
-                $event->getImage(),
+                $imagePath,
                 $event->getParticipants(),
                 $images
             );
