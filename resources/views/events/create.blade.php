@@ -13,6 +13,17 @@
         <form method="POST" action="{{ route('events.store') }}" enctype="multipart/form-data">
             @csrf
             <div class="px-4 py-5 sm:p-6 space-y-6">
+                <!-- Main image -->
+                <div>
+                    <label for="images" class="block text-sm font-medium text-gray-700">Asosiy rasm *</label>
+                    <input type="file" name="image" id="image" accept="image/*" required
+                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
+                    <p class="mt-1 text-sm text-gray-500">JPEG, PNG, JPG, GIF formatida, 2MB dan kichik bo'lishi kerak</p>
+                    @error('image')
+                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+
                 <!-- Title -->
                 <div>
                     <label for="title" class="block text-sm font-medium text-gray-700">Tadbir nomi *</label>
@@ -116,20 +127,6 @@
                             <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
                         @enderror
                     </div>
-                </div>
-
-                <!-- Images -->
-                <div>
-                    <label for="images" class="block text-sm font-medium text-gray-700">Rasmlar (1-5 ta) *</label>
-                    <input type="file" name="images[]" id="images" multiple accept="image/*" required
-                           class="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500">
-                    <p class="mt-1 text-sm text-gray-500">JPEG, PNG, JPG, GIF formatida, har biri 2MB dan kichik bo'lishi kerak</p>
-                    @error('images')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
-                    @error('images.*')
-                        <p class="mt-1 text-sm text-red-600">{{ $message }}</p>
-                    @enderror
                 </div>
             </div>
 

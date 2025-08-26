@@ -30,7 +30,7 @@ class Event extends Model
         'price',
         'currency',
         'is_free',
-        'images',
+        'image',
         'status'
     ];
 
@@ -39,7 +39,6 @@ class Event extends Model
         'end_time' => 'datetime',
         'price' => 'float',
         'is_free' => 'boolean',
-        'images' => 'array',
         'min_participants' => 'integer',
         'max_participants' => 'integer'
     ];

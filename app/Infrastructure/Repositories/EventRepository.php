@@ -19,7 +19,7 @@ use Illuminate\Support\Facades\DB;
 
 class EventRepository implements IEventRepository
 {
-    public function save(DomainEvent $event): void
+    public function save(DomainEvent $event, bool $isEdit = false): void
     {
         DB::beginTransaction();
         try {
@@ -42,7 +42,11 @@ class EventRepository implements IEventRepository
             $eloquentEvent->price = $event->getPrice()->getAmount();
             $eloquentEvent->currency = $event->getPrice()->getCurrency();
             $eloquentEvent->is_free = $event->getPrice()->isFree();
-            $eloquentEvent->images = $event->getImages();
+            if ($isEdit) {
+                $eloquentEvent->photos = $event->getPhotos();
+                $eloquentEvent->participants = $event->getParticipants();
+            }
+            $eloquentEvent->image = $event->getImage();
             $eloquentEvent->status = $event->getStatus();
             $eloquentEvent->updated_at = new DateTime();
 
@@ -316,11 +320,11 @@ class EventRepository implements IEventRepository
                 $event->max_participants
             ),
             new EventPrice($event->price, $event->currency),
-            $event->images ?? [],
             $event->status,
             $event->start_time,
             $event->end_time,
             $event->created_at,
+            $event->image,
             $participants,
             $photos
         );

@@ -90,13 +90,10 @@ class EventController extends Controller
     public function store(CreateEventRequest $request): RedirectResponse
     {
         try {
-            $images = [];
+            $imagePath = null;
 
-            if ($request->hasFile('images')) {
-                foreach ($request->file('images') as $image) {
-                    $path = $image->store('events', 'public');
-                    $images[] = $path;
-                }
+            if ($request->hasFile('image')) {
+                $imagePath = $request->file('image')->store('events', 'public');
             }
 
             $incomingData = $request->validated();
@@ -110,7 +107,7 @@ class EventController extends Controller
                 $incomingData['max_participants'],
                 $incomingData['price'] ?? 0,
                 $incomingData['currency'] ?? 'UZS',
-                $images,
+                $imagePath,
                 $incomingData['start_time'],
                 $incomingData['end_time']
             );
@@ -177,21 +174,25 @@ class EventController extends Controller
         try {
             $eventId = new EventId($uuid);
             $request->validated();
+
             $command = new EditEventCommand(
                 $eventId,
                 new EventTitle($request->title),
                 new EventDescription($request->description),
                 $request->address,
-                $request->startTime,
-                $request->minParticipants,
-                $request->has('maxParticipants') ? $request->maxParticipants : null,
+                $request->start_time,
+                $request->min_participants,
+                $request->has('max_participants') ? $request->max_participants : null,
                 $request->has('price') ? $request->price : null,
                 $request->has('currency') ? $request->currency : null,
-                $request->has('endTime') ? $request->endTime : null,
+                $request->has('end_time') ? $request->end_time : null,
                 $request->hasFile('images') ? $request->file('images') : null
             );
 
-            $event = $this->editEventCommandHandler->handle($command);
+            $this->editEventCommandHandler->handle($command);
+
+            return redirect()->route('events.show', $uuid)
+                ->with('success', 'Tadbir muvaffaqiyatli yangilandi');
         } catch (Exception $e) {
             $message = get_exception_message(
                 "Tadbirni yangilashda xatolik.",

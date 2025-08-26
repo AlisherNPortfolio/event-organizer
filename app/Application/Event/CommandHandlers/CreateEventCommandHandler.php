@@ -37,7 +37,7 @@ class CreateEventCommandHandler extends CommandHandler
             $startTime,
             $endTime,
             $command->currency,
-            $command->images
+            $command->image
         );
 
         $this->eventRepository->save($event);

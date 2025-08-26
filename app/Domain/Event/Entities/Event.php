@@ -16,6 +16,7 @@ class Event
     private string $status = 'upcoming';
     private DateTime $createdAt;
     private array $participants = [];
+    private array $eventPhotos = [];
 
     public function __construct(
         private EventId $id,
@@ -26,13 +27,12 @@ class Event
         private ParticipantLimit $participantLimit,
         private EventPrice $price,
         private DateTime $startTime,
-        private ?DateTime $endTime,
-        private array $images = []
+        private DateTime $endTime,
+        private string $image
     )
     {
         $this->createdAt = new DateTime();
         self::validateEventTimesForCreation($startTime, $endTime);
-        self::validateImages($images);
     }
 
     public static function create(
@@ -44,8 +44,8 @@ class Event
         ParticipantLimit $participantLimit,
         EventPrice $price,
         DateTime $startTime,
-        ?DateTime $endTime,
-        array $images = []
+        DateTime $endTime,
+        string $image
     ): self
     {
         return new self(
@@ -58,7 +58,7 @@ class Event
             $price,
             $startTime,
             $endTime,
-            $images
+            $image
         );
     }
 
@@ -70,11 +70,11 @@ class Event
         string $address,
         ParticipantLimit $participantLimit,
         EventPrice $price,
-        array $images = [],
         string $status = 'upcoming',
         DateTime $startTime,
-        ?DateTime $endTime,
-        ?DateTime $createdAt,
+        DateTime $endTime,
+        DateTime $createdAt,
+        string $image,
         array $participants = [],
         array $photos = []
     ): self {
@@ -87,13 +87,14 @@ class Event
             $participantLimit,
             $price,
             $startTime,
-            $endTime,$images
+            $endTime,
+            $image
         );
 
         $event->status = $status;
         $event->createdAt = $createdAt;
         $event->participants = $participants;
-        $event->images = $photos;
+        $event->eventPhotos = $photos;
 
         return $event;
     }
@@ -149,9 +150,14 @@ class Event
         return $this->price;
     }
 
-    public function getImages(): array
+    public function getImage(): string
     {
-        return $this->images;
+        return $this->image;
+    }
+
+    public function getPhotos(): array
+    {
+        return $this->eventPhotos;
     }
 
     public function getEndTime(): ?DateTime

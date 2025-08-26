@@ -5,8 +5,6 @@ namespace App\Application\Event\QueryHandlers;
 use App\Application\Event\Queries\GetEventQuery;
 use App\Application\Event\Services\EventService;
 use App\Application\Event\Services\ParticipantService;
-use App\Presentation\ViewModels\EventViewModel;
-use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Auth;
 
 class GetEventQueryHandler

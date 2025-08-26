@@ -18,7 +18,7 @@ class CreateEventCommand extends Command
         public readonly int $maxParticipants,
         public readonly float $price,
         public readonly string $currency,
-        public readonly array $images,
+        public readonly string $image,
         public readonly string $startTime,
         public readonly ?string $endTime
     )

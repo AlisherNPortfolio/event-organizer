@@ -22,9 +22,9 @@ class EventFactory
         int $maxParticipants,
         float $price = 0.0,
         DateTime $startTime,
-        ?DateTime $endTime,
+        DateTime $endTime,
         string $currency = 'UZS',
-        array $images = []
+        string $image
     ): Event {
         return Event::create(
             EventId::generate(),
@@ -36,7 +36,7 @@ class EventFactory
             $price > 0 ? new EventPrice($price, $currency) : EventPrice::free(),
             $startTime,
             $endTime,
-            $images
+            $image
         );
     }
 }
