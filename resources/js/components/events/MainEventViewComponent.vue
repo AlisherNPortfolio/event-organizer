@@ -18,7 +18,6 @@
                     <span>Tashkilotchi: <strong>{{ event.organizer_name }}</strong></span>
                     </div>
                 </div>
-
                 <!-- Share and Edit buttons -->
                 <div class="flex space-x-2">
                     <button @click="handleShareEvent" class="p-2 text-gray-400 hover:text-gray-600 rounded-full hover:bg-gray-100">

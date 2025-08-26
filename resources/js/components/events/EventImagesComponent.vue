@@ -1,6 +1,18 @@
 <template>
   <div class="relative" v-if="event.images && event.images.length > 0">
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 p-4">
+        <img :src="`/storage/${event.image}`" :alt="event.title" class="hidden">
+        <div
+            v-if="event.image"
+            class="md:col-span-2 md:row-span-2"
+        >
+            <img
+                :src="`/storage/${event.image}`"
+                :alt="event.title"
+                class="w-full object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity h-64 md:h-96"
+                @click="openImageModal(`/storage/${event.image}`)"
+            >
+        </div>
       <div
         v-for="(image, index) in event.images"
         :key="index"
@@ -11,7 +23,7 @@
           :alt="event.title"
           :class="[
             'w-full object-cover rounded-lg cursor-pointer hover:opacity-90 transition-opacity',
-            index === 0 ? 'h-64 md:h-96' : 'h-32'
+            index === 0 && event.image ? 'h-64 md:h-96' : 'h-32'
           ]"
           @click="openImageModal(`/storage/${image}`)"
         >
@@ -88,4 +100,5 @@ const closeImageModal = () => {
 const formatPrice = (price) => {
   return new Intl.NumberFormat('uz-UZ').format(price)
 }
+console.log('Event', props.event, props.event.image)
 </script>

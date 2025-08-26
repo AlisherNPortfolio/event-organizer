@@ -66,7 +66,7 @@ class EventService
             $event->getPrice()->getAmount(),
             $event->getPrice()->getCurrency(),
             $event->getPrice()->isFree(),
-            $event->getPhotos(),
+            $event->getImage(),
             $event->getStatus(),
             $event->getCreatedAt(),
             $event->getStartTime(),

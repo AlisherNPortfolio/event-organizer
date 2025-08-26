@@ -1,5 +1,6 @@
 <template>
   <div class="lg:col-span-2 space-y-6">
+    <EventMainImageComponent :imageUrl="event.image" />
     <!-- Description -->
     <div>
       <h3 class="text-lg font-semibold text-gray-900 mb-3">Tadbir haqida</h3>
@@ -34,7 +35,7 @@
 
 <script setup>
 import { computed, defineProps } from 'vue'
-
+import EventMainImageComponent from './EventMainImageComponent.vue'
 const props = defineProps({
   event: {
     type: Object,
