@@ -6,6 +6,7 @@ use App\Application\Event\DTO\EventDTO;
 use App\Application\RepositoryInterfaces\IEventRepository;
 use App\Application\RepositoryInterfaces\IParticipantRepository;
 use App\Application\RepositoryInterfaces\IUserRepository;
+use App\Domain\Auth\ValueObjects\UserId;
 use App\Domain\Event\Entities\Event;
 use App\Domain\Event\ValueObjects\EventId;
 
@@ -39,6 +40,24 @@ class EventService
     public function getAllEvents(int $page = 1, int $perPage = 10): array
     {
         $events = $this->eventRepository->findAll($page, $perPage);
+
+        return array_map(function ($event) {
+            return $this->mapEventToDTO($event);
+        }, $events);
+    }
+
+    public function getUserEvents(string $userId): array
+    {
+        $events = $this->eventRepository->findByOrganizer(new UserId($userId));
+
+        return array_map(function ($event) {
+            return $this->mapEventToDTO($event);
+        }, $events);
+    }
+
+    public function getUpcomingEvents(): array
+    {
+        $events = $this->eventRepository->search('', ['status' => 'upcoming']);
 
         return array_map(function ($event) {
             return $this->mapEventToDTO($event);

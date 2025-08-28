@@ -113,6 +113,79 @@ class ParticipantService
         );
     }
 
+    public function getUserParticipants(string $userId, ?string $status = null): array
+    {
+        $participants = $this->participantRepository->findByUser(new UserId($userId));
+        $result = [];
+
+        foreach ($participants as $participant) {
+            $event = $this->eventRepository->findById($participant->getEventId());
+            if (!$event) continue;
+
+            if($status && $event->getStatus() !== $status) continue;
+
+            $organizer = $this->userRepository->findById($event->getOrganizerId());
+
+            $result[] = [
+                'participant' => $this->mapParticipantToDTO($participant),
+                'event' => $this->mapEventToDTO($event, $organizer),
+                'joined_at' => $participant->getJoinedAt(),
+                'attended' => $participant->isAttended(),
+                'marked' => $participant->isMarked()
+            ];
+        }
+
+        usort($result, function ($a, $b) {
+                return $b['event']['start_time'] <=> $a['event']['start_time'];
+            });
+
+        return $result;
+    }
+
+    public function getUserAttandanceHistory(string $userId): array
+    {
+        $participants = $this->participantRepository->findByUser(new UserId($userId));
+        $user = $this->userRepository->findById(new UserId($userId));
+
+        throw_if(!$user, new InvalidArgumentException("Foydalanuvchi topilmadi"));
+
+        $history = [];
+        $currentRating = $user->getRating();
+
+        foreach ($participants as $participant) {
+            $event = $this->eventRepository->findById($participant->getEventId());
+            if (!$event || $event->getStatus() !== 'completed' || !$participant->isMarked()) continue;
+
+            $ratingChange = 0;
+            $reason = '';
+
+            if (!$participant->isAttended()) {
+                $ratingChange = -1;
+                $reason = "Tadbirda qatnashmadi";
+            }
+
+            $history[] = [
+                'event_id' => $event->getId()->value(),
+                'event_title' => $event->getTitle()->value(),
+                'event_date' => $event->getStartTime(),
+                'attended' => $participant->isAttended(),
+                'rating_change' => $ratingChange,
+                'reason' => $reason,
+                'marked_at' => $participant->getJoinedAt()
+            ];
+        }
+
+        usort($history, function ($a, $b) {
+            return $b['event_date'] <=> $a['event_date'];
+        });
+
+        return [
+            'current_rating' => $currentRating,
+            'history' => $history,
+            'total_penalties' => count(array_filter($history, fn($h) => $h['rating_change'] < 0))
+        ];
+    }
+
     private function mapUserToDTO(User $user): array
     {
         return [
@@ -120,6 +193,29 @@ class ParticipantService
             'name' => $user->getName(),
             'email' => $user->getEmail()->value(),
             'rating' => $user->getRating()
+        ];
+    }
+
+    private function mapEventToDTO($event, $organizer = null): array
+    {
+        $organizerName = $organizer ? $organizer->getName() : "Noma'lum";
+
+        return [
+            'id' => $event->getId()->value(),
+            'title' => $event->getTitle(),
+            'description' => $event->getDescription(),
+            'address' => $event->getAddress(),
+            'start_time' => $event->getStartTime(),
+            'end_time' => $event->getEndTime(),
+            'status' => $event->getStatus(),
+            'organizer_name' => $organizerName,
+            'price' => $event->getPrice()->getAmount(),
+            'currency' => $event->getPrice()->getCurrency(),
+            'is_free' => $event->getPrice()->isFree(),
+            'image' => $event->getImage(),
+            'photos' => $event->getPhotos(),
+            'max_participants' => $event->getParticipantLimit()->getMax(),
+            'min_participants' => $event->getParticipantLimit()->getMin()
         ];
     }
 }

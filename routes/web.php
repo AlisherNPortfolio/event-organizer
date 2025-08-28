@@ -1,6 +1,7 @@
 <?php
 
 use App\Presentation\Controllers\Auth\AuthController;
+use App\Presentation\Controllers\Dashboard\DashboardController;
 use App\Presentation\Controllers\Event\EventController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
@@ -21,9 +22,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/events', function () {
         return 'Event page';
     })->name('events.index');
-    Route::get('dashboard', function () {
-        return 'Dashboard page';
-    })->name('dashboard');
+    Route::get('dashboard', DashboardController::class)->name('dashboard');
 
     Route::prefix('events')->group(function () {
         Route::get('/create', [EventController::class, 'create'])->name('events.create');

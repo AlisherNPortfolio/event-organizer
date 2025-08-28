@@ -32,7 +32,6 @@ class Event
     )
     {
         $this->createdAt = new DateTime();
-        self::validateEventTimesForCreation($startTime, $endTime);
     }
 
     public static function create(
@@ -48,6 +47,7 @@ class Event
         string $image
     ): self
     {
+        self::validateEventTimesForCreation($startTime, $endTime);
         return new self(
             $id,
             $organizerId,

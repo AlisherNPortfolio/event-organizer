@@ -85,8 +85,8 @@
 
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">
                     <div class="relative">
-                        @if(!empty($event->images))
-                            <img src="{{ asset('storage/' . $event->images[0]) }}"
+                        @if(!empty($event->image))
+                            <img src="{{ asset('storage/' . $event->image) }}"
                                  alt="{{ $event->title }}"
                                  class="w-full h-48 object-cover">
                         @else
