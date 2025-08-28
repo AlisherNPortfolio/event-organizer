@@ -97,7 +97,7 @@ class AuthController extends Controller
 
     public function logout()
     {
-        try {dd('test');
+        try {
             Auth::logout();
             return redirect()->route('login')->with('success', 'Tizimdan muvaffaqiyatli chiqildi.');
         } catch (Exception $e) {
