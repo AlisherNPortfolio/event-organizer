@@ -24,6 +24,7 @@ class EventDTO
         public readonly DateTime $createdAt,
         public readonly DateTime $startTime,
         public readonly ?DateTime $endTime,
+        private readonly ?bool $isUserParticipating = null
     ) {}
 
     public function toArray(): array
@@ -97,6 +98,11 @@ class EventDTO
     public function getIsFree(): bool
     {
         return $this->isFree;
+    }
+
+    public function isCurrentUserParticipating(): ?bool
+    {
+        return $this->isUserParticipating;
     }
 
     public function __get($name)

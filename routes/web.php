@@ -3,6 +3,7 @@
 use App\Presentation\Controllers\Auth\AuthController;
 use App\Presentation\Controllers\Dashboard\DashboardController;
 use App\Presentation\Controllers\Event\EventController;
+use App\Presentation\Controllers\Event\ParticipantController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -19,15 +20,12 @@ Route::middleware(['auth'])->group(function () {
 Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
-    Route::get('/events', function () {
-        return 'Event page';
-    })->name('events.index');
     Route::get('dashboard', DashboardController::class)->name('dashboard');
 
     Route::resource('events', EventController::class)->except(['destroy']);
 
     Route::prefix('events')->group(function () {
-        Route::get('/join', fn () => 'join')->name('events.join');
+        Route::post('{eventId}/join', [ParticipantController::class, 'join'])->name('events.join');
     });
 });
 

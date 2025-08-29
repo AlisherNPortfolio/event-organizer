@@ -9,6 +9,7 @@ use App\Application\RepositoryInterfaces\IUserRepository;
 use App\Domain\Auth\ValueObjects\UserId;
 use App\Domain\Event\Entities\Event;
 use App\Domain\Event\ValueObjects\EventId;
+use Illuminate\Support\Facades\Auth;
 
 class EventService
 {
@@ -69,8 +70,20 @@ class EventService
         $organizer = $this->userRepository->findById($event->getOrganizerId());
         $organizerName = $organizer ? $organizer->getName() : "Noma'lum";
 
-        $participants = $this->participantRepository->findByEvent($event->getId());
-        $currentParticipants = count($participants);
+        $currentParticipants = count($event->getParticipants());
+        $isCurrentUserParticipating = null;
+        // var_dump(Auth::check());
+        if (Auth::check()) {
+            // echo "<pre>";
+            // print_r($event->getParticipants());
+            // echo "</pre>";
+            $isCurrentUserParticipating = in_array(
+                new UserId(Auth::id()),
+                $event->getParticipants()
+            );
+        }
+        // dd('test');
+
 
         return new EventDTO(
             $event->getId()->value(),
@@ -89,7 +102,8 @@ class EventService
             $event->getStatus(),
             $event->getCreatedAt(),
             $event->getStartTime(),
-            $event->getEndTime()
+            $event->getEndTime(),
+            $isCurrentUserParticipating
         );
     }
 }

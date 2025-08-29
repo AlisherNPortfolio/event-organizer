@@ -80,7 +80,7 @@
                     // Can join check
                     $canJoin = $event->status === 'upcoming' &&
                                $event->currentParticipants < $event->maxParticipants &&
-                               (!auth()->check() || $event->organizerId !== auth()->id());
+                               (!auth()->check() || $event->organizerId !== auth()->id()) && !$event->isCurrentUserParticipating();
                 @endphp
 
                 <div class="bg-white rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-shadow">

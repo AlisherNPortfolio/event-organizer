@@ -207,6 +207,36 @@ class Event
         $this->status = 'completed';
     }
 
+    public function join(UserId $userId): void
+    {
+        throw_if(
+            $this->isOrganizer($userId),
+            new InvalidArgumentException("Tashkilotchi o'zining tadbiriga qatnashchi sifatida qo'shilishi mumkin emas")
+        );
+
+        throw_if(
+            $this->hasParticipant($userId),
+            new InvalidArgumentException("Siz allaqachon tadbirga qo'shilgansiz")
+        );
+
+        throw_if(
+            !$this->canAcceptMoreParticipants(),
+            new InvalidArgumentException("Tadbirda joy qolmadi")
+        );
+
+        throw_if(
+            $this->status !== 'upcoming',
+            new InvalidArgumentException("Faqat kutilayotgan tadbirga qo'shilish mumkin")
+        );
+
+        $this->participants[] = $userId;
+    }
+
+    private function canAcceptMoreParticipants(): bool
+    {
+        return count($this->participants) < $this->participantLimit->getMax();
+    }
+
     private function validateImages(array $images): void
     {
         if (count($images) < 1) {
@@ -233,4 +263,6 @@ class Event
 
         return false;
     }
+
+
 }
