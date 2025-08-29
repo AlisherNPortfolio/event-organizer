@@ -11,7 +11,9 @@ use App\Application\Bus\IlluminateQueryBus;
 use App\Application\Bus\IQueryBus;
 use App\Application\Bus\ICommandBus;
 use App\Application\Event\CommandHandlers\JoinEventCommandHandler;
+use App\Application\Event\CommandHandlers\LeaveEventCommandHandler;
 use App\Application\Event\Commands\JoinEventCommand;
+use App\Application\Event\Commands\LeaveEventCommand;
 use App\Application\Event\Queries\GetEventQuery;
 use App\Application\Event\Queries\GetEventsQuery;
 use App\Application\Event\QueryHandlers\GetEventQueryHandler;
@@ -49,7 +51,8 @@ class AppServiceProvider extends ServiceProvider
             // command va command handler-lar bog'lanadi
             RegisterUserCommand::class => RegisterUserCommandHandler::class,
             LoginUserCommand::class => LoginUserCommandHandler::class,
-            JoinEventCommand::class => JoinEventCommandHandler::class
+            JoinEventCommand::class => JoinEventCommandHandler::class,
+            LeaveEventCommand::class => LeaveEventCommandHandler::class
         ]);
 
         $queryBus = app(IQueryBus::class);

@@ -232,6 +232,17 @@ class Event
         $this->participants[] = $userId;
     }
 
+    public function hasParticipant(UserId $userId): bool
+    {
+        foreach ($this->participants as $participant) {
+            if ($participant->equals($userId)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
     private function canAcceptMoreParticipants(): bool
     {
         return count($this->participants) < $this->participantLimit->getMax();
@@ -252,17 +263,4 @@ class Event
     {
         return $this->organizerId->equals($userId);
     }
-
-    private function hasParticipant(UserId $userId): bool
-    {
-        foreach ($this->participants as $participant) {
-            if ($participant->equals($userId)) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
 }

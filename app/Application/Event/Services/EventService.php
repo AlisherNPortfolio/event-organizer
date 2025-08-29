@@ -72,17 +72,11 @@ class EventService
 
         $currentParticipants = count($event->getParticipants());
         $isCurrentUserParticipating = null;
-        // var_dump(Auth::check());
         if (Auth::check()) {
-            // echo "<pre>";
-            // print_r($event->getParticipants());
-            // echo "</pre>";
-            $isCurrentUserParticipating = in_array(
-                new UserId(Auth::id()),
-                $event->getParticipants()
+            $isCurrentUserParticipating = $event->hasParticipant(
+                new UserId(Auth::id())
             );
         }
-        // dd('test');
 
 
         return new EventDTO(

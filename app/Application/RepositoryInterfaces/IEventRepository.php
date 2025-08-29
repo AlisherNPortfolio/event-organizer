@@ -18,4 +18,5 @@ interface IEventRepository
     public function findSimilarEvents(Event $event, int $limit = 6): array;
 
     public function updateStatus(EventId $eventId, EventStatus $status): bool;
+    public function removeParticipant(EventId $eventId, UserId $userId): bool;
 }

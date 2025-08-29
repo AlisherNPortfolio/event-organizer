@@ -233,7 +233,6 @@ const handleLeaveEvent = async () => {
   try {
     const result = await eventActions.leaveEvent(props.event.id)
     showNotification(result.message || 'Tadbirdan chiqib ketdingiz', 'success')
-    // Reload page to update participation status
     setTimeout(() => window.location.reload(), 1000)
   } catch (error) {
     showNotification(error.message, 'error')

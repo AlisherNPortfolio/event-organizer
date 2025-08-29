@@ -16,6 +16,7 @@ use App\Infrastructure\Models\Participant;
 use DateTime;
 use Exception;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 
 class EventRepository implements IEventRepository
 {
@@ -246,6 +247,21 @@ class EventRepository implements IEventRepository
         $this->save($event);
 
         return true;
+    }
+
+    public function removeParticipant(EventId $eventId, UserId $userId): bool
+    {
+        try {
+            Participant::query()
+            ->where('event_id', $eventId->value())
+            ->where('user_id', $userId->value())
+            ->delete();
+
+            return true;
+        } catch (Exception $e) {
+            Log::error("Tadbir ishtirokchisini o'chirib bo'lmadi. Sabab: " . $e->getMessage());
+            return false;
+        }
     }
 
     private function extractKeywords(string $title): array
