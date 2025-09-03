@@ -1,5 +1,6 @@
 <?php
 
+use App\Presentation\Controllers\Api\EventPhotoApiController;
 use App\Presentation\Controllers\Api\ParticipantApiController;
 use App\Presentation\Controllers\Event\ParticipantController;
 use Illuminate\Http\Request;
@@ -16,6 +17,10 @@ Route::prefix('v1')->group(function () {
             Route::post('{eventId}/join', [ParticipantController::class, 'join']);
             Route::delete('{eventId}/leave', [ParticipantApiController::class, 'leave']);
             Route::get('{eventId}/participants', [ParticipantApiController::class, 'eventParticipants']);
+
+            Route::prefix('{eventId}/photos')->group(function () {
+                Route::post('/', [EventPhotoApiController::class, 'store']);
+            });
         });
     });
 });

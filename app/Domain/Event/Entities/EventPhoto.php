@@ -18,6 +18,26 @@ class EventPhoto
         $this->id = Str::uuid();
     }
 
+    public static function fromDatabase(
+        string $id,
+        EventId $eventId,
+        UserId $uploadedBy,
+        DateTime $uploadedAt,
+        string $path
+    ): self
+    {
+        $eventPhoto = new self(
+            $eventId,
+            $uploadedBy,
+            $path
+        );
+
+        $eventPhoto->id = $id;
+        $eventPhoto->uploadedAt = $uploadedAt;
+
+        return $eventPhoto;
+    }
+
     public function getId(): string
     {
         return $this->id;
@@ -36,5 +56,10 @@ class EventPhoto
     public function getUploadedAt(): DateTime
     {
         return $this->uploadedAt;
+    }
+
+    public function getPath(): string
+    {
+        return $this->path;
     }
 }

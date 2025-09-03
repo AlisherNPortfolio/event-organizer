@@ -12,8 +12,10 @@ use App\Application\Bus\IQueryBus;
 use App\Application\Bus\ICommandBus;
 use App\Application\Event\CommandHandlers\JoinEventCommandHandler;
 use App\Application\Event\CommandHandlers\LeaveEventCommandHandler;
+use App\Application\Event\CommandHandlers\UploadEventPhotoCommandHandler;
 use App\Application\Event\Commands\JoinEventCommand;
 use App\Application\Event\Commands\LeaveEventCommand;
+use App\Application\Event\Commands\UploadEventPhotoCommand;
 use App\Application\Event\Queries\GetEventQuery;
 use App\Application\Event\Queries\GetEventsQuery;
 use App\Application\Event\QueryHandlers\GetEventQueryHandler;
@@ -52,7 +54,8 @@ class AppServiceProvider extends ServiceProvider
             RegisterUserCommand::class => RegisterUserCommandHandler::class,
             LoginUserCommand::class => LoginUserCommandHandler::class,
             JoinEventCommand::class => JoinEventCommandHandler::class,
-            LeaveEventCommand::class => LeaveEventCommandHandler::class
+            LeaveEventCommand::class => LeaveEventCommandHandler::class,
+            UploadEventPhotoCommand::class => UploadEventPhotoCommandHandler::class
         ]);
 
         $queryBus = app(IQueryBus::class);

@@ -243,6 +243,27 @@ class Event
         return false;
     }
 
+    public function addPhoto(string $path, UserId $uploadedBy): void
+    {
+        throw_if(
+            !$this->hasParticipant($uploadedBy) && !$this->isOrganizer($uploadedBy),
+            new InvalidArgumentException("Faqat qatnashchilar va tashkilotchi rasm yuklashi mumkin")
+        );
+
+        throw_if(
+            $this->status !== 'ongoing',
+            new InvalidArgumentException("Rasm faqat tadbir bo'layotgan paytda yuklanishi mumkin")
+        );
+
+        $userPhotoCount = count($this->getPhotos());
+        throw_if(
+            $userPhotoCount > 5,
+            new InvalidArgumentException("Bitta tadbir uchun bitta qatnashchi faqat 5 tagacha rasn yuklashi mumkin")
+        );
+
+        $this->eventPhotos[] = $path;
+    }
+
     private function canAcceptMoreParticipants(): bool
     {
         return count($this->participants) < $this->participantLimit->getMax();
@@ -259,7 +280,7 @@ class Event
         }
     }
 
-    private function isOrganizer(UserId $userId): bool
+    public function isOrganizer(UserId $userId): bool
     {
         return $this->organizerId->equals($userId);
     }
