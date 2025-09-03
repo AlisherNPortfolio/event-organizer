@@ -91,15 +91,15 @@
                 </div>
                 <div class="flex items-center space-x-2">
                   <span
-                    v-if="participant.participation.marked"
+                    v-if="participant.participant.marked"
                     :class="[
                       'px-2 py-1 text-xs font-semibold rounded-full',
-                      participant.participation.attended
+                      participant.participant.attended
                         ? 'bg-green-100 text-green-800'
                         : 'bg-red-100 text-red-800'
                     ]"
                   >
-                    {{ participant.participation.attended ? 'Qatnashgan' : 'Qatnashmagan' }}
+                    {{ participant.participant.attended ? 'Qatnashgan' : 'Qatnashmagan' }}
                   </span>
                   <span
                     v-else
@@ -108,7 +108,7 @@
                     Kutilmoqda
                   </span>
                   <span class="text-xs text-gray-500">
-                    {{ formatDate(participant.participation.joined_at) }}
+                    {{ formatDate(participant.participant.joined_at) }}
                   </span>
                 </div>
               </div>

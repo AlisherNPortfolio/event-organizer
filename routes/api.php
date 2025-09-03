@@ -15,6 +15,7 @@ Route::prefix('v1')->group(function () {
         Route::prefix('events')->group(function () {
             Route::post('{eventId}/join', [ParticipantController::class, 'join']);
             Route::delete('{eventId}/leave', [ParticipantApiController::class, 'leave']);
+            Route::get('{eventId}/participants', [ParticipantApiController::class, 'eventParticipants']);
         });
     });
 });

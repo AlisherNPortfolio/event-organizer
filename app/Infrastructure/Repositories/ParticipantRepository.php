@@ -46,7 +46,9 @@ class ParticipantRepository implements IParticipantRepository
     public function findByEvent(EventId $eventId): array
     {
         $eloquentParticipants = EloquentParticipant::query()
-            ->with(['user', 'event'])->where('event_id', $eventId->value())
+            ->with(['user' => function ($query) {
+                $query->select('id', 'name', 'email', 'avatar', 'rating');
+            }, 'event'])->where('event_id', $eventId->value())
             ->orderBy('created_at', 'asc')
             ->get();
 
@@ -91,6 +93,13 @@ class ParticipantRepository implements IParticipantRepository
             new EventId($eloquentParticipant->event_id),
             new UserId($eloquentParticipant->user_id)
         );
+
+        if ($eloquentParticipant->relationLoaded('user') && $eloquentParticipant->user) {
+            $participant->setUserName($eloquentParticipant->user->name);
+            $participant->setUserEmail($eloquentParticipant->user->email);
+            $participant->setUserAvatar($eloquentParticipant->user->avatar);
+            $participant->setUserRating($eloquentParticipant->user->rating);
+        }
 
         if ($eloquentParticipant->marked) {
             if ($eloquentParticipant->attended) {

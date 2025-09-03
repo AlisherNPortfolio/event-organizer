@@ -249,6 +249,7 @@ class EventRepository implements IEventRepository
         return true;
     }
 
+    // TODO: bu metodni ParticipantRepository ga ko'chirish kerak
     public function removeParticipant(EventId $eventId, UserId $userId): bool
     {
         try {
