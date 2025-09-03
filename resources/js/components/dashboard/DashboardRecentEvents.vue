@@ -50,7 +50,7 @@
                                         }"
                                     >
                                         <span v-if="event.status == 'upcoming'">Kutilmoqda</span>
-                                        <span v-else-if="event.status == 'ongoing'">Kutilmoqda</span>
+                                        <span v-else-if="event.status == 'ongoing'">Bo'lmoqda</span>
                                         <span v-else>Tugallangan</span>
                                     </span>
                                     <a :href="`/events/${event.id}`"
