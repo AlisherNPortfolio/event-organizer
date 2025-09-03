@@ -93,7 +93,7 @@ class EventRepository implements IEventRepository
     {
         $eloquentEvents = EloquentEvent::query()
                             ->with(['participants'])
-                            ->upcoming()
+                            // ->upcoming()
                             ->orderBy('created_at', 'desc')
                             ->skip(($page - 1) * $perPage)
                             ->take($perPage)
