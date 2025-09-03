@@ -25,6 +25,35 @@ class Participant
         $this->userData['id'] = $userId->value();
     }
 
+    public static function fromDatabase(
+        UserId $id,
+        EventId $eventId,
+        string $name,
+        string $email,
+        float $rating,
+        DateTime $joinedAt,
+        ?string $avatar = null,
+        int $attended = 0,
+        int $marked = 0
+    ): self
+    {
+        $participant = new self(
+            $eventId,
+            $id
+        );
+
+        $participant->attended = $attended;
+        $participant->marked = $marked;
+        $participant->joinedAt = $joinedAt;
+        $participant->userData['id'] = $id->value();
+        $participant->userData['name'] = $name;
+        $participant->userData['email'] = $email;
+        $participant->userData['avatar'] = $avatar;
+        $participant->userData['rating'] = $rating;
+
+        return $participant;
+    }
+
     public function isAttended(): bool
     {
         return $this->attended;

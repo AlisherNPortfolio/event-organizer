@@ -6,6 +6,7 @@ use App\Application\RepositoryInterfaces\IEventPhotoRepository;
 use App\Domain\Auth\ValueObjects\UserId;
 use App\Domain\Event\Entities\EventPhoto as DomainEventPhoto;
 use App\Domain\Event\Entities\Event as DomainEvent;
+use App\Domain\Event\Entities\Participant as DomainParticipant;
 use App\Domain\Event\ValueObjects\EventId;
 use App\Infrastructure\Models\EventPhoto as EloquentEventPhoto;
 use DateTime;
@@ -48,14 +49,40 @@ class EventPhotoRepository implements IEventPhotoRepository
         return $this->toDomainEventPhoto($eventPhoto);
     }
 
+    public function findByEventId(EventId $eventId): array
+    {
+        $eventPhotos = EloquentEventPhoto::query()
+                        ->where('event_id', $eventId->value())
+                        ->with('uploader:id,name,avatar,email,rating,created_at')
+                        ->orderBy('created_at', 'desc')
+                        ->get();
+
+        return $eventPhotos->map(function ($photo) {
+            return $this->toDomainEventPhoto($photo);
+        })->toArray();
+    }
+
     private function toDomainEventPhoto(EloquentEventPhoto $eventPhoto)
     {
+        $eventId = new EventId($eventPhoto->event_id);
+        $uploadedBy = new UserId($eventPhoto->uploaded_by);
+        $uploader = DomainParticipant::fromDatabase(
+            $uploadedBy,
+            $eventId,
+            $eventPhoto->uploader->name,
+            $eventPhoto->uploader->email,
+            $eventPhoto->uploader->rating,
+            $eventPhoto->uploader->created_at,
+            $eventPhoto->uploader->avatar
+        );
+
         return DomainEventPhoto::fromDatabase(
             $eventPhoto->id,
-            new EventId($eventPhoto->event_id),
-            new UserId($eventPhoto->uploaded_by),
+            $eventId,
+            $uploadedBy,
             new DateTime($eventPhoto->created_at),
-            $eventPhoto->path
+            $eventPhoto->path,
+            $uploader
         );
     }
 }

@@ -12,6 +12,8 @@ class EventPhoto
     private DateTime $uploadedAt;
     private string $id;
 
+    private Participant $uploader;
+
     public function __construct(private EventId $eventId, private UserId $uploadedBy, private string $path)
     {
         $this->uploadedAt = new DateTime();
@@ -23,7 +25,8 @@ class EventPhoto
         EventId $eventId,
         UserId $uploadedBy,
         DateTime $uploadedAt,
-        string $path
+        string $path,
+        ?Participant $participant = null
     ): self
     {
         $eventPhoto = new self(
@@ -34,6 +37,9 @@ class EventPhoto
 
         $eventPhoto->id = $id;
         $eventPhoto->uploadedAt = $uploadedAt;
+        if ($participant) {
+            $eventPhoto->uploader = $participant;
+        }
 
         return $eventPhoto;
     }
@@ -61,5 +67,10 @@ class EventPhoto
     public function getPath(): string
     {
         return $this->path;
+    }
+
+    public function getUploader(): Participant
+    {
+        return $this->uploader;
     }
 }

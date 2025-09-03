@@ -20,6 +20,7 @@ Route::prefix('v1')->group(function () {
 
             Route::prefix('{eventId}/photos')->group(function () {
                 Route::post('/', [EventPhotoApiController::class, 'store']);
+                Route::get('/', [EventPhotoApiController::class, 'index']);
             });
         });
     });

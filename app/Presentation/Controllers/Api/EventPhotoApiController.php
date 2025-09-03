@@ -4,6 +4,8 @@ namespace App\Presentation\Controllers\Api;
 
 use App\Application\Event\CommandHandlers\UploadEventPhotoCommandHandler;
 use App\Application\Event\Commands\UploadEventPhotoCommand;
+use App\Application\Event\Queries\GetEventPhotosQuery;
+use App\Application\Event\QueryHandlers\GetEventPhotosQueryHandler;
 use App\Domain\Auth\ValueObjects\UserId;
 use App\Domain\Event\ValueObjects\EventId;
 use App\Presentation\Controllers\Controller;
@@ -17,7 +19,8 @@ use Illuminate\Support\Facades\Storage;
 class EventPhotoApiController extends Controller
 {
     public function __construct(
-        private readonly UploadEventPhotoCommandHandler $uploadEventPhotoCommandHandler
+        private readonly UploadEventPhotoCommandHandler $uploadEventPhotoCommandHandler,
+        private readonly GetEventPhotosQueryHandler $getEventPhotosQueryHandler
     )
     {}
 
@@ -56,6 +59,30 @@ class EventPhotoApiController extends Controller
                 'success' => false,
                 'message' => $message
             ], 400);
+        }
+    }
+
+    public function index(string $eventId): JsonResponse
+    {
+        try {
+            $query = new GetEventPhotosQuery(
+                new EventId($eventId)
+            );
+
+            $photos = $this->getEventPhotosQueryHandler->handle($query);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Tadbir rasmlari',
+                'photos' => $photos
+            ]);
+        } catch (Exception $e) {
+            $message = get_exception_message("Rasmlani olishda xatolik", $e->getMessage());
+            return response()->json([
+                'success' => false,
+                'message' => $message,
+                'photos' => []
+            ]);
         }
     }
 }
