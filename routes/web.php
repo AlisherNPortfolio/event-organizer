@@ -34,7 +34,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('edit', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::get('my-events', fn() => 'profile.my-events')->name('profile.my-events');
         Route::get('my-participations', fn() => 'profile.my-participations')->name('profile.my-participations');
-        Route::put('update', fn() => 'profile.update')->name('profile.update');
+        Route::put('update', [ProfileController::class, 'update'])->name('profile.update');
         Route::post('update', fn() => 'upload-avatar')->name('profile.upload-avatar');
     });
 });

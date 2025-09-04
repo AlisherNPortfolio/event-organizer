@@ -2,22 +2,27 @@
 
 namespace App\Presentation\Controllers\Profile;
 
+use App\Application\Profile\CommandHandlers\UpdateProfileCommandHandler;
+use App\Application\Profile\Commands\UpdateProfileCommand;
 use App\Application\Profile\Query\GetProfileQuery;
 use App\Application\Profile\Query\GetUserStatisticsQuery;
 use App\Application\Profile\QueryHandlers\GetProfileQueryHandler;
 use App\Application\Profile\QueryHandlers\GetUserStatisticsQueryHandler;
 use App\Domain\Auth\ValueObjects\UserId;
 use App\Presentation\Controllers\Controller;
+use App\Presentation\Requests\Profile\UpdateProfileRequest;
 use App\Presentation\ViewModels\ProfileViewModel;
 use Exception;
 use Illuminate\Contracts\View\View;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Support\Facades\Auth;
 
 class ProfileController extends Controller
 {
     public function __construct(
         private readonly GetProfileQueryHandler $getProfileQueryHandler,
-        private readonly GetUserStatisticsQueryHandler $getUserStatisticsQueryHandler
+        private readonly GetUserStatisticsQueryHandler $getUserStatisticsQueryHandler,
+        private readonly UpdateProfileCommandHandler $updateProfileCommandHandler
     )
     {}
 
@@ -46,5 +51,26 @@ class ProfileController extends Controller
     public function edit(): View
     {
         return view('profile.edit');
+    }
+
+    public function update(UpdateProfileRequest $request): RedirectResponse
+    {
+        try {
+            $command = new UpdateProfileCommand(
+                new UserId(Auth::id()),
+                $request->validated('name'),
+                $request->validated('email'),
+                $request->validated('current_password'),
+                $request->validated('password'),
+                $request->validated('password_confirmation')
+            );
+            $this->updateProfileCommandHandler->handle($command);
+
+            return redirect()->route('profile.show')
+            ->with('success', 'Profil yangilandi');
+        } catch (Exception $e) {
+            $message = get_exception_message("Profil ma'lumotlarini yangilashda xatolik. ", $e->getMessage());
+            return back()->withErrors(['error' => $message])->withInput();
+        }
     }
 }

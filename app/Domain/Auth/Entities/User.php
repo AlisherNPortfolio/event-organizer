@@ -17,16 +17,42 @@ class User extends BaseEntity
     private array $events = [];
 
     public function __construct(
-        private readonly UserId $id,
-        private readonly string $name,
-        private readonly UserEmail $email,
-        private readonly Password $password,
-        private readonly ?string $avatar = null,
+        private UserId $id,
+        private string $name,
+        private UserEmail $email,
+        private Password $password,
+        private ?string $avatar = null,
     )
     {
         $this->rating = 0;
         $this->createdAt = new \DateTime();
         $this->updatedAt = new \DateTime();
+    }
+
+    public static function fromDatabase(
+        UserId $userId,
+        string $name,
+        UserEmail $email,
+        Password $password,
+        int $rating,
+        DateTime $createdAt,
+        DateTime $updatedAt,
+        ?string $avatar = null
+    ): self
+    {
+        $user = new self(
+            $userId,
+            $name,
+            $email,
+            $password,
+            $avatar
+        );
+
+        $user->rating = $rating;
+        $user->createdAt = $createdAt;
+        $user->updatedAt = $updatedAt;
+
+        return $user;
     }
 
     public function getId(): UserId
@@ -72,6 +98,14 @@ class User extends BaseEntity
     public function verifyPassword(string $plainPassword): bool
     {
         return $this->password->verify($plainPassword);
+    }
+
+    public function updatePassword(Password $password): void
+    {
+        if (!$this->password->equals($password)) {
+            $this->password = $password;
+            $this->updatedAt = new DateTime();
+        }
     }
 
     public function decreaseRating(): void
