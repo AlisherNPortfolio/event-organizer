@@ -14,7 +14,13 @@ class GetEventsQueryHandler
 
     public function handle(GetEventsQuery $query): array
     {
-        if (count($query->filters)) {
+        if (
+            count($query->filters) &&
+            array_filter(
+                $query->filters,
+                fn($filter) => !is_null($filter)
+                )
+            ) {
             return $this->service->searchEvents(
                 $query->search ?? '',
                 $query->filters,
