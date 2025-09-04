@@ -5,14 +5,10 @@ namespace App\Application\Profile\QueryHandlers;
 use App\Application\Event\Services\EventService;
 use App\Application\Event\Services\ParticipantService;
 use App\Application\Profile\Query\GetUserStatisticsQuery;
-use App\Application\RepositoryInterfaces\IEventRepository;
-use App\Application\RepositoryInterfaces\IParticipantRepository;
 
 class GetUserStatisticsQueryHandler
 {
     public function __construct(
-        private readonly IEventRepository $eventRepository,
-        private readonly IParticipantRepository $participantRepository,
         private readonly EventService $eventService,
         private readonly ParticipantService $participantService
     )
@@ -20,8 +16,8 @@ class GetUserStatisticsQueryHandler
 
     public function handle(GetUserStatisticsQuery $query): array
     {
-        $organizedEvents = $this->eventService->getUserEvents($query->userId->value()); // $this->eventRepository->findByOrganizer($query->userId);
-        $participants = $this->participantService->getUserParticipants($query->userId->value()); //$this->participantRepository->findByUser($query->userId);
+        $organizedEvents = $this->eventService->getUserEvents($query->userId->value());
+        $participants = $this->participantService->getUserParticipants($query->userId->value());
 
         $upcomingEvents = array_filter($organizedEvents, fn($event) => $event->status == 'upcoming');
         $completedEvents = array_filter($organizedEvents, fn($event) => $event->status == 'completed');
