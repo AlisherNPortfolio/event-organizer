@@ -5,7 +5,7 @@ services:
       dockerfile: ./_container_data/dockerfiles/nginx.dockerfile
     container_name: app_server
     ports:
-      - "8584:80"
+      - "8585:80"
     # prodcutionda volume commentga olinadi
     # volumes:
     #   - ./:/var/www/html
