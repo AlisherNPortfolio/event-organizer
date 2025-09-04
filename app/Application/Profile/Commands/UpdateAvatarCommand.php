@@ -11,7 +11,7 @@ class UpdateAvatarCommand extends Command
     public function __construct(
         public UserId $userId,
         public UploadedFile $file,
-        public string $oldPath
+        public ?string $oldPath
     )
     {}
 }
