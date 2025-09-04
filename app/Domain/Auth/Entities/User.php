@@ -108,6 +108,14 @@ class User extends BaseEntity
         }
     }
 
+    public function updateAvatar(?string $path): void
+    {
+        if ($this->avatar !== $path) {
+            $this->avatar = $path;
+            $this->updatedAt = new DateTime();
+        }
+    }
+
     public function decreaseRating(): void
     {
         $oldRating = $this->rating;

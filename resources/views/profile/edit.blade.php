@@ -100,7 +100,7 @@
                 <div class="flex-shrink-0">
                     @if($user->avatar)
                         <img class="h-20 w-20 rounded-full object-cover"
-                             src="{{ $user->avatar_url }}"
+                             src="{{ asset('storage/' . $user->avatar) }}"
                              alt="{{ $user->name }}">
                     @else
                         <div class="h-20 w-20 rounded-full bg-gray-300 flex items-center justify-center">
@@ -115,7 +115,7 @@
                     <form method="POST" action="{{ route('profile.upload-avatar') }}" enctype="multipart/form-data" class="flex items-center space-x-4">
                         @csrf
                         <input type="file" name="avatar" accept="image/*" required
-                               class="block text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50 focus:outline-none">
+                               class="avatar-input block text-sm text-gray-900 border border-gray-300 rounded-md cursor-pointer bg-gray-50 focus:outline-none">
                         <button type="submit"
                                 class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 text-sm">
                             Yuklash

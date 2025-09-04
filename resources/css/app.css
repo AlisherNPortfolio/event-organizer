@@ -28,3 +28,7 @@ nav.bg-white {
   right: 0;
   top: 65px;
 }
+
+.avatar-input {
+    max-width: 50%;
+}
