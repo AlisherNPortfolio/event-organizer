@@ -42,4 +42,9 @@ class ProfileController extends Controller
             return view('profile.show');
         }
     }
+
+    public function edit(): View
+    {
+        return view('profile.edit');
+    }
 }
