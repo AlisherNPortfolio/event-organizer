@@ -16,7 +16,7 @@
                 <div class="flex-shrink-0">
                     @if($user->avatar)
                         <img class="h-20 w-20 rounded-full object-cover"
-                             src="{{ $user->avatar_url }}"
+                             src="{{ asset('storage/' . $user->avatar) }}"
                              alt="{{ $user->name }}">
                     @else
                         <div class="h-20 w-20 rounded-full bg-gray-300 flex items-center justify-center">
