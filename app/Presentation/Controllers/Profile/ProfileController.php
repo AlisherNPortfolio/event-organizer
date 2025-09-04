@@ -2,8 +2,10 @@
 
 namespace App\Presentation\Controllers\Profile;
 
+use App\Application\Profile\CommandHandlers\RemoveAvatarCommandHandler;
 use App\Application\Profile\CommandHandlers\UpdateAvatarCommandHandler;
 use App\Application\Profile\CommandHandlers\UpdateProfileCommandHandler;
+use App\Application\Profile\Commands\RemoveAvatarCommand;
 use App\Application\Profile\Commands\UpdateAvatarCommand;
 use App\Application\Profile\Commands\UpdateProfileCommand;
 use App\Application\Profile\Query\GetProfileQuery;
@@ -27,7 +29,8 @@ class ProfileController extends Controller
         private readonly GetProfileQueryHandler $getProfileQueryHandler,
         private readonly GetUserStatisticsQueryHandler $getUserStatisticsQueryHandler,
         private readonly UpdateProfileCommandHandler $updateProfileCommandHandler,
-        private readonly UpdateAvatarCommandHandler $updateAvatarCommandHandler
+        private readonly UpdateAvatarCommandHandler $updateAvatarCommandHandler,
+        private readonly RemoveAvatarCommandHandler $removeAvatarCommandHandler
     )
     {}
 
@@ -107,6 +110,23 @@ class ProfileController extends Controller
 
         } catch (Exception $e) {
             $message = get_exception_message("Profil rasmini yangilashda xatolik", $e->getMessage());
+            return back()->withErrors(['error' => $message]);
+        }
+    }
+
+    public function deleteAvatar(): RedirectResponse
+    {
+        try {
+            $userId = Auth::id();
+
+            $command = new RemoveAvatarCommand(
+                new UserId($userId)
+            );
+
+            $this->removeAvatarCommandHandler->handle($command);
+            return back()->with('success', 'Profil rasmi o\'chirildi');
+        } catch (Exception $e) {
+            $message = get_exception_message("Profil rasmini o'chirishda xatolik. ", $e->getMessage());
             return back()->withErrors(['error' => $message]);
         }
     }

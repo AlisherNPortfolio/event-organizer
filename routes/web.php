@@ -36,7 +36,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('my-participations', fn() => 'profile.my-participations')->name('profile.my-participations');
         Route::put('update', [ProfileController::class, 'update'])->name('profile.update');
         Route::post('update', [ProfileController::class, 'uploadAvatar'])->name('profile.upload-avatar');
-        Route::delete('/', fn() => 'delete')->name('profile.delete-avatar');
+        Route::delete('/', [ProfileController::class, 'deleteAvatar'])->name('profile.delete-avatar');
     });
 });
 

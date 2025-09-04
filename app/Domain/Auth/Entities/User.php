@@ -108,6 +108,11 @@ class User extends BaseEntity
         }
     }
 
+    public function removeAvatar()
+    {
+        $this->avatar = null;
+    }
+
     public function updateAvatar(?string $path): void
     {
         if ($this->avatar !== $path) {
