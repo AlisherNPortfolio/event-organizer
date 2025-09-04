@@ -6,6 +6,7 @@ use App\Domain\Auth\ValueObjects\Password;
 use App\Domain\Auth\ValueObjects\UserEmail;
 use App\Domain\Auth\ValueObjects\UserId;
 use App\Domain\Shared\Entity\BaseEntity;
+use DateTime;
 
 class User extends BaseEntity
 {
@@ -71,5 +72,19 @@ class User extends BaseEntity
     public function verifyPassword(string $plainPassword): bool
     {
         return $this->password->verify($plainPassword);
+    }
+
+    public function decreaseRating(): void
+    {
+        $oldRating = $this->rating;
+        $this->rating = max(0, $oldRating - 1);
+        $this->updatedAt = new DateTime();
+    }
+
+    public function increaseRating(): void
+    {
+        // $oldRating = $this->rating;
+        $this->rating++;
+        $this->updatedAt = new DateTime();
     }
 }

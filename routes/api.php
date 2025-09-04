@@ -25,6 +25,7 @@ Route::prefix('v1')->group(function () {
             });
 
             Route::get('{eventId}/similar', [EventApiController::class, 'similarEvents']);
+            Route::post('{eventId}/attendance', [ParticipantApiController::class, 'markAttendace']);
         });
     });
 });

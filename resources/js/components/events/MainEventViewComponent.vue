@@ -298,11 +298,10 @@ const handleMarkAttendance = async ({ participantId, attended, reset = false }) 
 
     const result = await eventActions.markAttendance(props.event.id, participantId, attended)
 
-    // Update attendance data locally
     const participant = attendanceData.value.find(p => p.user.id === participantId)
     if (participant) {
-      participant.participation.attended = attended
-      participant.participation.marked = true
+      participant.participant.attended = attended
+      participant.participant.marked = true
     }
 
     showNotification(

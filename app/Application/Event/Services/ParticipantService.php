@@ -50,8 +50,8 @@ class ParticipantService
                 'marked' => $participant->isMarked()
             ];
         }
-
-        usort($result, fn ($a, $b) => $b['event']['start_time'] <=> $a['event']['start_time']);
+// dd($result);
+        usort($result, fn ($a, $b) => $b['participant']->joinedAt <=> $a['participant']->joinedAt);
 
         return $result;
     }

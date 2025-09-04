@@ -131,22 +131,22 @@
                       <p class="text-xs text-gray-500">
                         Reyting: {{ participant.user.rating }} ball
                         <span class="mx-1">•</span>
-                        Qo'shilgan: {{ formatDate(participant.participation.joined_at) }}
+                        Qo'shilgan: {{ formatDate(participant.participant.joined_at) }}
                       </p>
                     </div>
                   </div>
 
                   <div class="flex items-center space-x-2">
                     <span
-                      v-if="participant.participation.marked"
+                      v-if="participant.participant.marked"
                       :class="[
                         'px-2 py-1 text-xs font-semibold rounded-full',
-                        participant.participation.attended
+                        participant.participant.attended
                           ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
                       ]"
                     >
-                      {{ participant.participation.attended ? 'Qatnashgan' : 'Qatnashmagan' }}
+                      {{ participant.participant.attended ? 'Qatnashgan' : 'Qatnashmagan' }}
                     </span>
 
                     <div v-else class="flex space-x-1">
@@ -170,7 +170,7 @@
 
                     <!-- Quick action for already marked -->
                     <button
-                      v-if="participant.participation.marked"
+                      v-if="participant.participant.marked"
                       @click="handleResetAttendance(participant.user.id)"
                       class="text-gray-400 hover:text-gray-600 text-xs focus:outline-none focus:ring-2 focus:ring-gray-300 rounded p-1"
                       title="Qayta belgilash"
@@ -263,8 +263,8 @@ const attendanceStats = computed(() => {
   }
 
   props.attendanceData.forEach(participant => {
-    if (participant.participation.marked) {
-      if (participant.participation.attended) {
+    if (participant.participant.marked) {
+      if (participant.participant.attended) {
         stats.attended++
       } else {
         stats.notAttended++
@@ -283,7 +283,7 @@ const filteredAttendanceData = computed(() => {
   }
 
   return props.attendanceData.filter(participant => {
-    const { marked, attended } = participant.participation
+    const { marked, attended } = participant.participant
 
     switch (filterStatus.value) {
       case 'pending':
@@ -299,7 +299,7 @@ const filteredAttendanceData = computed(() => {
 })
 console.log(filteredAttendanceData.value)
 const pendingParticipants = computed(() => {
-  return props.attendanceData.filter(participant => !participant.participation.marked)
+  return props.attendanceData.filter(participant => !participant.participant.marked)
 })
 
 const handleMarkAttendance = async (participantId, attended) => {
