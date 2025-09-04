@@ -4,6 +4,7 @@ use App\Presentation\Controllers\Auth\AuthController;
 use App\Presentation\Controllers\Dashboard\DashboardController;
 use App\Presentation\Controllers\Event\EventController;
 use App\Presentation\Controllers\Event\ParticipantController;
+use App\Presentation\Controllers\Profile\ProfileController;
 use Illuminate\Foundation\Auth\EmailVerificationRequest;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -26,6 +27,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
     Route::prefix('events')->group(function () {
         Route::post('{eventId}/join', [ParticipantController::class, 'join'])->name('events.join');
+    });
+
+    Route::prefix('profile')->group(function () {
+        Route::get('/', [ProfileController::class, 'show'])->name('profile.show');
+        Route::get('edit', fn() => 'profile.edit')->name('profile.edit');
+        Route::get('my-events', fn() => 'profile.my-events')->name('profile.my-events');
+        Route::get('my-participations', fn() => 'profile.my-participations')->name('profile.my-participations');
     });
 });
 

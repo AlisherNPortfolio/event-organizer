@@ -145,6 +145,11 @@ class Event
         return $this->participantLimit;
     }
 
+    public function getParticipantCount(): int
+    {
+        return count($this->participants);
+    }
+
     public function getPrice(): EventPrice
     {
         return $this->price;
