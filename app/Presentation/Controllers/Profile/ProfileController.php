@@ -86,27 +86,18 @@ class ProfileController extends Controller
     {
         try {
             $user = Auth::user();
-            $oldAvatar = $user->avatar;
 
-            $newAvatarPath = $request->file('avatar')->store('avatars', 'public');
+            $command = new UpdateAvatarCommand(
+                new UserId($user->id),
+                $request->file('avatar'),
+                $user->avatar
+            );
 
-            if ($newAvatarPath) {
-                if ($oldAvatar) {
-                    Storage::disk('public')->delete($oldAvatar);
-                }
+            $this->updateAvatarCommandHandler->handle($command);
+            $user->refresh();
 
-                $command = new UpdateAvatarCommand(
-                    new UserId($user->id),
-                    $newAvatarPath
-                );
-                $this->updateAvatarCommandHandler->handle($command);
-                $user->refresh();
-
-                return back()
-                ->with('success', 'Profil rasmi yangilandi');
-            }
-
-            return back()->withErrors(['error' => "Rasmni serverda saqlashda xatolik"]);
+            return back()
+            ->with('success', 'Profil rasmi yangilandi');
 
         } catch (Exception $e) {
             $message = get_exception_message("Profil rasmini yangilashda xatolik", $e->getMessage());

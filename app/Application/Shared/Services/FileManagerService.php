@@ -2,6 +2,7 @@
 
 namespace App\Application\Shared\Services;
 
+use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
 class FileManagerService
@@ -13,5 +14,10 @@ class FileManagerService
         }
 
         return false;
+    }
+
+    public function upload(UploadedFile $file, string $folder = 'default', string $disk = 'public'): string|bool
+    {
+        return $file->store($folder, $disk);
     }
 }
