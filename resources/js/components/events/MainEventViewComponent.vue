@@ -70,7 +70,11 @@
     </div>
 
     <!-- Similar Events -->
-    <SimilarEventsComponent :current-event-id="event.id" />
+    <SimilarEventsComponent
+        :current-event-id="event.id"
+        :csrf-token="csrfToken"
+        :temp-bearer-token="tempBearerToken"
+     />
 
     <!-- Modals - Har biri alohida, faqat kerakli ko'rsatiladi -->
     <PhotoUploadModal

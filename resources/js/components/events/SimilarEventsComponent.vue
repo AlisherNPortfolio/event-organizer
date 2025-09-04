@@ -27,8 +27,8 @@
         >
           <div class="aspect-video bg-gray-100 rounded-lg mb-3 overflow-hidden">
             <img
-              v-if="event.images && event.images.length > 0"
-              :src="`/storage/${event.images[0]}`"
+              v-if="event.image"
+              :src="`/storage/${event.image}`"
               :alt="event.title"
               class="w-full h-full object-cover"
             >
@@ -96,6 +96,14 @@ const props = defineProps({
   currentEventId: {
     type: [String, Number],
     required: true
+  },
+  csrfToken: {
+    type: String,
+    required: true
+  },
+  tempBearerToken: {
+    type: String,
+    required: true
   }
 })
 
@@ -110,11 +118,22 @@ const loadSimilarEvents = async () => {
   try {
     loading.value = true
 
-    const response = await fetch(`/api/v1/events/${props.currentEventId}/similar`)
+    const response = await fetch(`/api/v1/events/${props.currentEventId}/similar`, {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'X-CSRF-TOKEN': props.csrfToken,
+                    'Authorization': `Bearer ${props.tempBearerToken}`,
+                }})
 
     if (response.ok) {
       const data = await response.json();
-      similarEvents.value = data || []
+      if (data.success) {
+            similarEvents.value = data?.data || []
+      } else {
+        alert(data.message)
+      }
+
     }
   } catch (error) {
     console.error('Error loading similar events:', error)

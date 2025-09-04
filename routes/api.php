@@ -1,5 +1,6 @@
 <?php
 
+use App\Presentation\Controllers\Api\EventApiController;
 use App\Presentation\Controllers\Api\EventPhotoApiController;
 use App\Presentation\Controllers\Api\ParticipantApiController;
 use App\Presentation\Controllers\Event\ParticipantController;
@@ -22,6 +23,8 @@ Route::prefix('v1')->group(function () {
                 Route::post('/', [EventPhotoApiController::class, 'store']);
                 Route::get('/', [EventPhotoApiController::class, 'index']);
             });
+
+            Route::get('{eventId}/similar', [EventApiController::class, 'similarEvents']);
         });
     });
 });

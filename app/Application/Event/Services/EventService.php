@@ -65,6 +65,20 @@ class EventService
         }, $events);
     }
 
+    public function getSimilarEvents(EventId $eventId, int $limit = 3): array
+    {
+        $currentEvent = $this->eventRepository->findById($eventId);
+        if (!$currentEvent) {
+            return [];
+        }
+
+        $similarEvents = $this->eventRepository->findSimilarEvents($currentEvent, $limit);
+
+        return array_map(function ($event) {
+            return $this->mapEventToDTO($event);
+        }, $similarEvents);
+    }
+
     private function mapEventToDTO(Event $event): EventDTO
     {
         $organizer = $this->userRepository->findById($event->getOrganizerId());
