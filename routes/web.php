@@ -40,7 +40,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     });
 });
 
-Route::get('/events', [EventController::class, 'index'])->name('events.index');
+Route::get('/', [EventController::class, 'index'])->name('events.index');
 
 // Email verification routes
 Route::middleware('auth')->prefix('email')->group(function () {
