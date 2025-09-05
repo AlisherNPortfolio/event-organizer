@@ -18,8 +18,9 @@ services:
       dockerfile: ./_container_data/dockerfiles/php.dockerfile
     container_name: app_backend
     # prodcutionda volume commentga olinadi
-    # volumes:
-    #   - ./:/var/www/html:delegated
+    volumes:
+      # - ./:/var/www/html:delegated
+      - ./public/build:/var/www/html/public/build
     depends_on:
       - mysql_db
   mysql_db:
