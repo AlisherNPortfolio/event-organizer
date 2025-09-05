@@ -6,6 +6,8 @@ COPY . .
 
 COPY php-fpm.d/www.conf /usr/local/etc/php-fpm.d/www.conf
 
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+
 # RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -s /bin/sh -D laravel
 # USER laravel
 
