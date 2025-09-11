@@ -6,6 +6,8 @@ use App\Application\Auth\Commands\RegisterUserCommand;
 use App\Application\Bus\CommandHandler;
 use App\Application\RepositoryInterfaces\IUserRepository;
 use App\Domain\Auth\Factories\UserFactory;
+use App\Infrastructure\Models\User;
+use Illuminate\Auth\Events\Registered;
 
 class RegisterUserCommandHandler extends CommandHandler
 {
@@ -27,6 +29,12 @@ class RegisterUserCommandHandler extends CommandHandler
             );
 
             $this->repository->save($user);
+
+            event(new Registered(new User([
+                'id' => $user->getId()->value(),
+                'name' => $user->getName(),
+                'email' => $user->getEmail()->value()
+            ])));
 
             return $user->getId()->value();
         } catch (\Exception $e) {
