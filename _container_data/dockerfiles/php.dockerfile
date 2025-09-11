@@ -65,5 +65,5 @@ RUN docker-php-ext-install opcache \
 # RUN docker-php-ext-install pdo pdo_mysql
 
 RUN docker-php-ext-install pdo pdo_mysql \
-    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache \
-    && chown -R www-data:www-data /var/www/html
+    && chown -R www-data:www-data /var/www/html /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
