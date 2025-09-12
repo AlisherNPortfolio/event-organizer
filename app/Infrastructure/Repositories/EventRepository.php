@@ -20,6 +20,45 @@ use Illuminate\Support\Facades\Log;
 
 class EventRepository implements IEventRepository
 {
+    public function chunkStartedUpcomingEvents(int $size, callable $callback): void
+    {
+        EloquentEvent::query()
+        ->upcoming()
+        ->where('start_time', '<=', now())
+        ->where('end_time', '>', now())
+        ->chunk($size, function ($models) use ($callback) {
+            $entities = $models->map(fn($model) => $this->toDomainEvent($model));
+            $callback($entities);
+
+            $data = $entities->map(fn($entity) => [
+                'id' => $entity->getId()->value(),
+                'status' => $entity->getStatus()
+            ])->all();
+
+            EloquentEvent::upsert($data, ['id'], ['status']);
+        });
+    }
+
+    public function chunkEndedOngoingEvents(int $size, callable $callback): void
+    {
+        EloquentEvent::query()
+        ->ongoing()
+        ->where('end_time', '<=', now())
+        // Tugash vaqti bo'lmasa, 8 soatdan so'ng tugatamiz
+        ->orWhere('start_time', '<=', now()->subHours(8))
+        ->chunk($size, function ($models) use ($callback) {
+            $entities = $models->map(fn($model) => $this->toDomainEvent($model));
+            $callback($entities);
+
+            $data = $entities->map(fn($entity) => [
+                'id' => $entity->getId()->value(),
+                'status' => $entity->getStatus()
+            ])->all();
+
+            EloquentEvent::upsert($data, ['id'], ['status']);
+        });
+    }
+
     public function save(DomainEvent $event, bool $isEdit = false): void
     {
         DB::beginTransaction();
@@ -263,6 +302,19 @@ class EventRepository implements IEventRepository
             Log::error("Tadbir ishtirokchisini o'chirib bo'lmadi. Sabab: " . $e->getMessage());
             return false;
         }
+    }
+
+    public function getStartedUpcomingStatusEvents(): array
+    {
+        $startedEvents = EloquentEvent::query()
+        ->upcoming()
+        ->where('start_time', '<=', now())
+        ->where('end_time', '>', now())
+        ->get();
+
+        return $startedEvents->map(function ($event) {
+            return $this->toDomainEvent($event);
+        });
     }
 
     private function extractKeywords(string $title): array

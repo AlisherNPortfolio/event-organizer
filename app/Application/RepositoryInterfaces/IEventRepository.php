@@ -9,6 +9,8 @@ use App\Domain\Event\ValueObjects\EventStatus;
 
 interface IEventRepository
 {
+    public function chunkStartedUpcomingEvents(int $size, callable $callback): void;
+    public function chunkEndedOngoingEvents(int $size, callable $callback): void;
     public function save(Event $event): void;
     public function findById(EventId $id): ?Event;
     public function findByOrganizer(UserId $organizerId): array;
@@ -19,4 +21,6 @@ interface IEventRepository
 
     public function updateStatus(EventId $eventId, EventStatus $status): bool;
     public function removeParticipant(EventId $eventId, UserId $userId): bool;
+
+    public function getStartedUpcomingStatusEvents(): array;
 }

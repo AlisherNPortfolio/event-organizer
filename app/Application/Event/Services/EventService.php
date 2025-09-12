@@ -9,6 +9,7 @@ use App\Application\RepositoryInterfaces\IUserRepository;
 use App\Domain\Auth\ValueObjects\UserId;
 use App\Domain\Event\Entities\Event;
 use App\Domain\Event\ValueObjects\EventId;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Facades\Auth;
 
 class EventService
@@ -77,6 +78,24 @@ class EventService
         return array_map(function ($event) {
             return $this->mapEventToDTO($event);
         }, $similarEvents);
+    }
+
+    public function markCurrentUpcomingAsOngoing(): void
+    {
+        $this->eventRepository->chunkStartedUpcomingEvents(100, function ($events) {
+            foreach ($events as $event) {
+                $event->markAsOngoing();
+            }
+        });
+    }
+
+    public function markCurrentOngoingAsCompleted(): void
+    {
+        $this->eventRepository->chunkEndedOngoingEvents(100, function ($events) {
+            foreach($events as $event) {
+                $event->markAsCompleted();
+            }
+        });
     }
 
     private function mapEventToDTO(Event $event): EventDTO
