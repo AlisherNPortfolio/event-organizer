@@ -30,12 +30,6 @@ class RegisterUserCommandHandler extends CommandHandler
 
             $this->repository->save($user);
 
-            event(new Registered(new User([
-                'id' => $user->getId()->value(),
-                'name' => $user->getName(),
-                'email' => $user->getEmail()->value()
-            ])));
-
             return $user->getId()->value();
         } catch (\Exception $e) {
             $message = get_exception_message('Foydalanuvchini ro\'yxatdan o\'tkazishda xatolik.', $e->getMessage());
