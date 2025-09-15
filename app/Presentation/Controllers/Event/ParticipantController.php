@@ -56,9 +56,9 @@ class ParticipantController extends Controller
                 new UserId(Auth::id())
             );
 
-            $data = $this->getUserParticipantsQueryHandler->handle($query);
+            $participants = $this->getUserParticipantsQueryHandler->handle($query);
 
-            return view("profile.my-participants", compact("data"));
+            return view("profile.my-participants", compact("participants"));
         } catch (Exception $e) {
             $message = get_exception_message("Xatolik yuz berdi.", $e->getMessage());
             return back()->with("error", $message);
