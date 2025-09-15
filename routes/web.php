@@ -31,7 +31,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/', [ProfileController::class, 'show'])->name('profile.show');
         Route::get('edit', [ProfileController::class, 'edit'])->name('profile.edit');
         Route::get('my-events', fn() => 'profile.my-events')->name('profile.my-events');
-        Route::get('my-participations', fn() => 'profile.my-participations')->name('profile.my-participations');
+        Route::get('my-participations', [ParticipantController::class, 'myParticipants'])->name('profile.my-participations');
         Route::put('update', [ProfileController::class, 'update'])->name('profile.update');
         Route::post('update', [ProfileController::class, 'uploadAvatar'])->name('profile.upload-avatar');
         Route::delete('/', [ProfileController::class, 'deleteAvatar'])->name('profile.delete-avatar');
