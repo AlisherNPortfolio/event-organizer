@@ -1,9 +1,5 @@
 FROM php:8.4-fpm-alpine
 
-# Add crontab
-RUN apk update \
-    apk add cron
-
 WORKDIR /var/www/html
 
 COPY . .
@@ -14,14 +10,6 @@ RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cac
 
 RUN chmod -R 755 /var/www/html/public \
     && chown -R www-data:www-data /var/www/html/public
-
-# add permission to cron
-RUN chmod +x /var/www/html/scripts/*.sh
-
-COPY /var/www/html/_container_data/cron/Crontab /etc/cron.d/
-
-# RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -s /bin/sh -D laravel
-# USER laravel
 
 # Setup GD extension
 RUN apk add \
@@ -77,5 +65,9 @@ RUN docker-php-ext-install pdo pdo_mysql \
     && chown -R www-data:www-data /var/www/html /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-RUN ln -sf /dev/stdout /var/log/cron.log
-CMD ["cron", "-f"]
+COPY crontab.txt /var/spool/cron/crontabs/root
+COPY entrypoint.sh /usr/local/bin/entrypoint.sh
+
+RUN chmod +x /usr/local/bin/entrypoint.sh
+
+ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
