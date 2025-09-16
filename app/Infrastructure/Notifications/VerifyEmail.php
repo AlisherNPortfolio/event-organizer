@@ -10,11 +10,11 @@ class VerifyEmail extends Notification
     protected function buildMailMessage($url): MailMessage
     {
         return (new MailMessage())
-            ->subject(trans('auth.mail.verify.subject'))
-            ->line(trans('auth.mail.verify.line1', [
+            ->subject(__('auth.mail.verify.subject'))
+            ->line(__('auth.mail.verify.line1', [
                 'count' => config('auth.verification.expire', 60),
             ]))
-            ->action(trans('auth.mail.verify.action'), $url)
-            ->line(trans('auth.mail.verify.line2'));
+            ->action(__('auth.mail.verify.action'), $url)
+            ->line(__('auth.mail.verify.line2'));
     }
 }
