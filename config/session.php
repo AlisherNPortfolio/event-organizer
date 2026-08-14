@@ -51,6 +51,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Session Data Serialization
+    |--------------------------------------------------------------------------
+    |
+    | This option determines how session data is serialized before storage.
+    | The "php" format keeps backwards compatibility with sessions created
+    | before this option existed; "json" hardens against PHP object
+    | deserialization gadget chain attacks but invalidates existing sessions.
+    |
+    */
+
+    'serialization' => env('SESSION_SERIALIZATION', 'php'),
+
+    /*
+    |--------------------------------------------------------------------------
     | Session File Location
     |--------------------------------------------------------------------------
     |
