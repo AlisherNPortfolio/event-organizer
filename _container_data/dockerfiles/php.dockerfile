@@ -2,7 +2,7 @@ FROM php:8.4-fpm-alpine
 
 # Add crontab
 RUN apk update \
-    apk add cron
+    && apk add dcron
 
 WORKDIR /var/www/html
 
@@ -18,7 +18,7 @@ RUN chmod -R 755 /var/www/html/public \
 # add permission to cron
 RUN chmod +x /var/www/html/scripts/*.sh
 
-COPY /var/www/html/_container_data/cron/Crontab /etc/cron.d/
+COPY _container_data/cron/Crontab /etc/cron.d/
 
 # RUN addgroup -g 1000 laravel && adduser -G laravel -g laravel -s /bin/sh -D laravel
 # USER laravel
@@ -78,4 +78,4 @@ RUN docker-php-ext-install pdo pdo_mysql \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 RUN ln -sf /dev/stdout /var/log/cron.log
-CMD ["cron", "-f"]
+CMD ["crond", "-f", "-L", "/var/log/cron.log"]
